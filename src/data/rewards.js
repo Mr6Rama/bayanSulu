@@ -1,20 +1,20 @@
 export const rewards = [
   {
-    id: 'sticker-pack',
-    title: 'Стикер-пак',
-    cost: 10,
-    description: 'Красивые наклейки для профиля.',
+    id: 'kambot-sticker',
+    title: 'Стикер КамБота',
+    cost: 30,
+    description: 'Весёлый цифровой стикер для маленького исследователя.',
   },
   {
-    id: 'coloring-book',
-    title: 'Раскраска',
-    cost: 20,
-    description: 'Новая раскраска на вечер.',
+    id: 'mini-coupon',
+    title: 'Мини-купон',
+    cost: 60,
+    description: 'Небольшой бонус за регулярные игры и обучение.',
   },
   {
-    id: 'surprise-box',
-    title: 'Сюрприз-бокс',
-    cost: 35,
-    description: 'Особый подарок от Bayan Sulu Kids.',
+    id: 'discount-500',
+    title: 'Скидка 500 ₸',
+    cost: 100,
+    description: 'Демо-награда для будущей интеграции с офлайн-покупкой.',
   },
 ];

@@ -9,6 +9,8 @@ const tabs = [
 ];
 
 function Header({ currentScreen, onNavigate, appState }) {
+  const showNav = currentScreen !== 'onboarding';
+
   return (
     <header className="header">
       <div className="header__top">
@@ -21,18 +23,20 @@ function Header({ currentScreen, onNavigate, appState }) {
         <CoinBadge coins={appState.coins} />
       </div>
 
-      <nav className="header__nav" aria-label="Основная навигация">
-        {tabs.map((tab) => (
-          <Button
-            key={tab.id}
-            variant={currentScreen === tab.id ? 'chip-active' : 'chip'}
-            className="button--compact"
-            onClick={() => onNavigate(tab.id)}
-          >
-            {tab.label}
-          </Button>
-        ))}
-      </nav>
+      {showNav && (
+        <nav className="header__nav" aria-label="Основная навигация">
+          {tabs.map((tab) => (
+            <Button
+              key={tab.id}
+              variant={currentScreen === tab.id ? 'chip-active' : 'chip'}
+              className="button--compact"
+              onClick={() => onNavigate(tab.id)}
+            >
+              {tab.label}
+            </Button>
+          ))}
+        </nav>
+      )}
     </header>
   );
 }

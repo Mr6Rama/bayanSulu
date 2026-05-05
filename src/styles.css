@@ -31,7 +31,8 @@ body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: var(--text);
   background:
-    radial-gradient(circle at top, #fff7eb 0, #fff7eb 20%, transparent 55%),
+    linear-gradient(135deg, rgba(105, 179, 109, 0.14), transparent 28%),
+    linear-gradient(225deg, rgba(255, 140, 66, 0.16), transparent 32%),
     linear-gradient(180deg, #fffaf4 0%, #fde9d4 100%);
 }
 
@@ -53,7 +54,9 @@ button {
   min-height: 100vh;
   width: 100%;
   margin: 0 auto;
-  background: linear-gradient(180deg, #fffdf9 0%, #fff6ec 100%);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.76) 0%, rgba(255, 246, 236, 0.94) 100%),
+    linear-gradient(135deg, #fff9ef 0%, #eef8e9 100%);
   box-shadow: none;
   overflow: hidden;
 }
@@ -87,7 +90,7 @@ button {
 }
 
 .header {
-  padding: 18px 18px 0;
+  padding: 18px 18px 4px;
 }
 
 .header__top {
@@ -136,7 +139,8 @@ button {
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 14px 18px;
+  min-height: 54px;
+  padding: 15px 18px;
   border-radius: 18px;
   background: var(--primary);
   color: #fff;
@@ -173,7 +177,7 @@ button {
   border: 1px solid var(--card-border);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow);
-  padding: 18px;
+  padding: 20px;
 }
 
 .card + .card {
@@ -182,7 +186,7 @@ button {
 
 .section-title {
   margin: 0 0 10px;
-  font-size: 18px;
+  font-size: 21px;
 }
 
 .muted {
@@ -200,18 +204,77 @@ button {
 }
 
 .location-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 14px;
   text-align: left;
   width: 100%;
+  min-height: 110px;
+  color: var(--text);
+  border: 0;
+  box-shadow: 0 12px 28px rgba(122, 74, 38, 0.12);
 }
 
 .location-card__city {
-  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   font-size: 18px;
+  font-weight: 900;
 }
 
 .location-card__game {
+  display: block;
   margin: 6px 0 0;
+  color: var(--text);
+  font-weight: 800;
+}
+
+.location-card__hint {
+  display: block;
+  margin-top: 6px;
   color: var(--muted);
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.location-card__emoji {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.76);
+  font-size: 28px;
+}
+
+.location-card__check {
+  display: inline-grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: var(--success);
+  color: #fff;
+  font-size: 18px;
+}
+
+.location-card--sun {
+  background: linear-gradient(135deg, #fff0bf, #fff9e9);
+}
+
+.location-card--garden {
+  background: linear-gradient(135deg, #dff5df, #fff8ef);
+}
+
+.location-card--silk {
+  background: linear-gradient(135deg, #e6f0ff, #fff2e2);
+}
+
+.location-card--done {
+  outline: 2px solid rgba(105, 179, 109, 0.36);
 }
 
 .pill-row {
@@ -263,6 +326,60 @@ button {
   width: fit-content;
 }
 
+.onboarding-hero {
+  position: relative;
+  overflow: hidden;
+}
+
+.kambot-avatar {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 26px;
+  background: #fff;
+  box-shadow: 0 12px 24px rgba(122, 74, 38, 0.12);
+  font-size: 42px;
+}
+
+.age-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.age-button {
+  min-height: 50px;
+  border-radius: 16px;
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  font-size: 18px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.age-button--active {
+  background: var(--primary);
+  color: #fff;
+  border-color: transparent;
+}
+
+.progress-track {
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--card-border);
+}
+
+.progress-track span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--success), var(--primary));
+}
+
 .stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -289,10 +406,134 @@ button {
   font-size: 13px;
 }
 
+.reward-card {
+  text-align: center;
+}
+
+.reward-title {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+.shop-card {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.shop-card__cost {
+  width: fit-content;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.shop-card__status {
+  width: fit-content;
+  padding: 9px 12px;
+  border-radius: 999px;
+  background: #fff4d6;
+  color: #76551b;
+  font-weight: 900;
+}
+
+.shop-card__status--ok {
+  background: #e9f8e9;
+  color: #2f6d36;
+}
+
+.pin-input {
+  text-align: center;
+  font-size: 26px;
+  font-weight: 900;
+  letter-spacing: 0;
+}
+
 .empty-state {
   text-align: center;
   padding: 28px 18px;
   border-radius: 24px;
   background: rgba(255, 255, 255, 0.72);
   border: 1px dashed var(--card-border);
+}
+
+.game-question {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.game-options {
+  display: grid;
+  gap: 12px;
+}
+
+.answer-button {
+  width: 100%;
+  min-height: 64px;
+  padding: 16px;
+  border-radius: 22px;
+  background: #fff;
+  color: var(--text);
+  border: 2px solid var(--card-border);
+  box-shadow: 0 10px 24px rgba(122, 74, 38, 0.1);
+  font-size: 22px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.game-message {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  border-radius: 22px;
+  font-size: 18px;
+  line-height: 1.35;
+  font-weight: 800;
+}
+
+.game-message span {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.game-message--hint {
+  background: #fff4d6;
+  color: #76551b;
+}
+
+.game-message--success {
+  background: #e9f8e9;
+  color: #2f6d36;
+}
+
+.memory-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.memory-card {
+  aspect-ratio: 1;
+  border-radius: 24px;
+  background: var(--primary);
+  color: #fff;
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 10px 24px rgba(255, 140, 66, 0.18);
+  font-size: 34px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.memory-card--open {
+  background: #fff;
+  color: var(--text);
+  border-color: var(--card-border);
 }

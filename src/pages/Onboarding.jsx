@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import Button from '../components/Button';
 
+const ages = ['7', '8', '9', '10', '11'];
+
 function Onboarding({ completeOnboarding }) {
   const [name, setName] = useState('');
-  const [age, setAge] = useState('');
+  const [age, setAge] = useState('7');
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -21,12 +23,13 @@ function Onboarding({ completeOnboarding }) {
 
   return (
     <section className="stack">
-      <div className="hero card">
-        <div className="hero__badge pill">Добро пожаловать</div>
-        <h2 className="section-title">Начнём игру с уютного знакомства</h2>
+      <div className="hero card onboarding-hero">
+        <div className="kambot-avatar">🤖</div>
+        <div className="hero__badge pill">КамБот рядом</div>
+        <h2 className="section-title">Сәлем! Я КамБот.</h2>
         <p className="muted">
-          Мы сохраним имя, возраст и прогресс в этом устройстве, чтобы приложение
-          было быстрым и простым.
+          Давай отправимся по городам Казахстана, будем играть, учиться и собирать
+          ботакоины.
         </p>
       </div>
 
@@ -41,18 +44,23 @@ function Onboarding({ completeOnboarding }) {
           />
         </label>
 
-        <label>
+        <div>
           <span className="field-label">Возраст</span>
-          <input
-            className="input"
-            value={age}
-            onChange={(event) => setAge(event.target.value)}
-            inputMode="numeric"
-            placeholder="Например, 7"
-          />
-        </label>
+          <div className="age-grid">
+            {ages.map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={`age-button ${age === item ? 'age-button--active' : ''}`}
+                onClick={() => setAge(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
 
-        <Button type="submit">Продолжить</Button>
+        <Button type="submit">Начать путешествие</Button>
       </form>
     </section>
   );

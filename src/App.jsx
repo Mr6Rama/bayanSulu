@@ -5,18 +5,29 @@ import MapPage from './pages/MapPage';
 import RewardPage from './pages/RewardPage';
 import ShopPage from './pages/ShopPage';
 import ParentModePage from './pages/ParentModePage';
+import MathGame from './pages/games/MathGame';
+import MemoryGame from './pages/games/MemoryGame';
+import WordsGame from './pages/games/WordsGame';
 import { loadAppState, loadScreen, saveAppState, saveScreen } from './utils/storage';
 
 const defaultAppState = {
   name: '',
   age: '',
   coins: 0,
-  completedGames: 0,
-  lastReward: '',
+  completedGames: [],
+  lastReward: null,
 };
 
+function normalizeAppState(state) {
+  return {
+    ...state,
+    completedGames: Array.isArray(state.completedGames) ? state.completedGames : [],
+    lastReward: typeof state.lastReward === 'object' ? state.lastReward : null,
+  };
+}
+
 function App() {
-  const [appState, setAppState] = useState(() => loadAppState(defaultAppState));
+  const [appState, setAppState] = useState(() => normalizeAppState(loadAppState(defaultAppState)));
   const [currentScreen, setCurrentScreen] = useState(() => {
     const savedScreen = loadScreen('onboarding');
     const hasProfile = loadAppState(defaultAppState).name;
@@ -52,17 +63,20 @@ function App() {
         coins: Math.max(0, prev.coins + amount),
       }));
     },
-    setLastReward: (reward) => {
+    finishGame: (gameId, coinsAmount) => {
       setAppState((prev) => ({
         ...prev,
-        lastReward: reward,
+        coins: prev.coins + coinsAmount,
+        completedGames: prev.completedGames.includes(gameId)
+          ? prev.completedGames
+          : [...prev.completedGames, gameId],
+        lastReward: {
+          gameId,
+          coins: coinsAmount,
+          message: `Ты получил ${coinsAmount} ботакоинов!`,
+        },
       }));
-    },
-    incrementCompletedGames: () => {
-      setAppState((prev) => ({
-        ...prev,
-        completedGames: prev.completedGames + 1,
-      }));
+      setCurrentScreen('reward');
     },
     resetProfile: () => {
       setAppState(defaultAppState);
@@ -83,6 +97,9 @@ function App() {
       {currentScreen === 'reward' && <RewardPage {...screenProps} />}
       {currentScreen === 'shop' && <ShopPage {...screenProps} />}
       {currentScreen === 'parent' && <ParentModePage {...screenProps} />}
+      {currentScreen === 'mathGame' && <MathGame {...screenProps} />}
+      {currentScreen === 'memoryGame' && <MemoryGame {...screenProps} />}
+      {currentScreen === 'wordsGame' && <WordsGame {...screenProps} />}
     </AppShell>
   );
 }
