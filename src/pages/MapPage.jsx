@@ -1,61 +1,53 @@
 import { locations } from '../data/locations';
 import LocationCard from '../components/LocationCard';
 import Button from '../components/Button';
+import Card from '../components/Card';
+import Mascot from '../components/Mascot';
+import ProgressBar from '../components/ProgressBar';
 
 function MapPage({ appState, goToScreen }) {
   const handleLocationClick = (location) => {
-    goToScreen(location.screen);
+    goToScreen(location.gameScreen);
   };
   const completedCount = appState.completedGames.length;
 
   return (
-    <section className="stack">
-      <div className="card stack">
-        <div className="pill-row">
-          <span className="pill">👧 {appState.name || 'Ребёнок'}</span>
-          <span className="pill">🎂 {appState.age || '—'} лет</span>
-        </div>
+    <section className="screen">
+      <Card className="stack route-card">
+        <h2 className="hero-title">Сәлем, {appState.name || 'дос'}!</h2>
+        <Mascot
+          mood="thinking"
+          size="medium"
+          speech="Выбери локацию и помоги мне пройти маршрут!"
+        />
+        <ProgressBar
+          value={completedCount}
+          max={locations.length}
+          label={`Пройдено ${completedCount} из ${locations.length} игр`}
+        />
+      </Card>
 
-        <div>
-          <h2 className="section-title">Карта приключений</h2>
-          <p className="muted">
-            {appState.name || 'Игрок'}, пройдено {completedCount} из {locations.length} игр.
-          </p>
-        </div>
-
-        <div className="progress-track" aria-label={`Пройдено ${completedCount} из ${locations.length}`}>
-          <span style={{ width: `${(completedCount / locations.length) * 100}%` }} />
-        </div>
-
-        <div className="stats">
-          <div className="stat">
-            <span className="stat__value">{completedCount}/3</span>
-            <span className="stat__label">игр пройдено</span>
-          </div>
-          <div className="stat">
-            <span className="stat__value">{appState.coins}</span>
-            <span className="stat__label">монет</span>
-          </div>
-        </div>
+      <div className="route-list">
+        {locations.map((location) => (
+          <LocationCard
+            key={location.id}
+            title={location.title}
+            subtitle={location.subtitle}
+            icon={location.icon}
+            completed={appState.completedGames.includes(location.id)}
+            onClick={() => handleLocationClick(location)}
+          />
+        ))}
       </div>
 
-      <div>
-        <h2 className="section-title">Карта городов</h2>
-        <div className="grid">
-          {locations.map((location) => (
-            <LocationCard
-              key={location.city}
-              {...location}
-              isCompleted={appState.completedGames.includes(location.id)}
-              onClick={() => handleLocationClick(location)}
-            />
-          ))}
-        </div>
+      <div className="bottom-actions">
+        <Button variant="secondary" onClick={() => goToScreen('shop')}>
+          Магазин
+        </Button>
+        <Button variant="ghost" onClick={() => goToScreen('parent')}>
+          Parent Mode
+        </Button>
       </div>
-
-      <Button variant="secondary" onClick={() => goToScreen('reward')}>
-        Смотреть награду
-      </Button>
     </section>
   );
 }

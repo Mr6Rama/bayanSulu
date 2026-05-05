@@ -1,30 +1,41 @@
 import { useState } from 'react';
 import Button from '../../components/Button';
+import Card from '../../components/Card';
+import Mascot from '../../components/Mascot';
 
 const answers = ['Верблюд', 'Гора', 'Конфета'];
 const correctAnswer = 'Верблюд';
 
 function WordsGame({ finishGame, goToScreen }) {
   const [status, setStatus] = useState('idle');
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
 
   const handleAnswer = (answer) => {
+    setSelectedAnswer(answer);
     setStatus(answer === correctAnswer ? 'success' : 'hint');
   };
 
   return (
-    <section className="stack">
-      <div className="card stack">
-        <div className="pill">Туркестан</div>
-        <h2 className="section-title">Қазақша сөздер</h2>
+    <section className="screen">
+      <Mascot
+        mood="thinking"
+        size="small"
+        speech="Давай выучим казахское слово!"
+      />
+
+      <Card className="stack">
+        <span className="badge badge-muted">Туркестан • Қазақша</span>
         <p className="game-question">Что означает слово “түйе”?</p>
-      </div>
+      </Card>
 
       <div className="game-options">
         {answers.map((answer) => (
           <button
             key={answer}
             type="button"
-            className="answer-button"
+            className={`answer-option ${
+              selectedAnswer === answer && status === 'success' ? 'correct' : ''
+            } ${selectedAnswer === answer && status === 'hint' ? 'wrong' : ''}`}
             onClick={() => handleAnswer(answer)}
           >
             {answer}
@@ -33,14 +44,16 @@ function WordsGame({ finishGame, goToScreen }) {
       </div>
 
       {status === 'hint' && (
-        <div className="game-message game-message--hint">Попробуй ещё раз</div>
+        <Card className="info-card warning-card">
+          Подумай ещё немного. КамБот подсказывает: это животное пустыни.
+        </Card>
       )}
 
       {status === 'success' && (
-        <div className="game-message game-message--success">
-          Дұрыс! “Түйе” означает “верблюд”.
-          <span>Факт: верблюд долго живёт в степи и пустыне без воды.</span>
-        </div>
+        <Card className="success-card">
+          <h3>Дұрыс! “Түйе” означает “верблюд”.</h3>
+          <p>“Түйе” — это верблюд. КамБот тоже маленький верблюжонок.</p>
+        </Card>
       )}
 
       {status === 'success' && (

@@ -1,42 +1,42 @@
 import CoinBadge from './CoinBadge';
 import Button from './Button';
 
-const tabs = [
-  { id: 'map', label: 'Карта' },
-  { id: 'reward', label: 'Награда' },
-  { id: 'shop', label: 'Магазин' },
-  { id: 'parent', label: 'Для родителей' },
-];
+const titleMap = {
+  onboarding: 'Bayan Sulu Kids',
+  map: 'Карта путешествия',
+  reward: 'Награда',
+  shop: 'Магазин бонусов',
+  parent: 'Parent Mode',
+  math: 'Счёт с КамБотом',
+  memory: 'Найди пару',
+  words: 'Қазақша сөздер',
+};
+
+const backTargets = {
+  reward: 'map',
+  shop: 'map',
+  parent: 'map',
+  math: 'map',
+  memory: 'map',
+  words: 'map',
+};
 
 function Header({ currentScreen, onNavigate, appState }) {
-  const showNav = currentScreen !== 'onboarding';
+  const title = titleMap[currentScreen] || 'Bayan Sulu Kids';
+  const backTarget = backTargets[currentScreen];
 
   return (
     <header className="header">
-      <div className="header__top">
-        <div>
-          <h1 className="header__title">Bayan Sulu Kids</h1>
-          <p className="header__subtitle">
-            {appState.name ? `Привет, ${appState.name}!` : 'Тёплое приложение для игр и наград'}
-          </p>
-        </div>
-        <CoinBadge coins={appState.coins} />
-      </div>
-
-      {showNav && (
-        <nav className="header__nav" aria-label="Основная навигация">
-          {tabs.map((tab) => (
-            <Button
-              key={tab.id}
-              variant={currentScreen === tab.id ? 'chip-active' : 'chip'}
-              className="button--compact"
-              onClick={() => onNavigate(tab.id)}
-            >
-              {tab.label}
-            </Button>
-          ))}
-        </nav>
+      {backTarget && (
+        <Button variant="ghost" className="header-back" onClick={() => onNavigate(backTarget)}>
+          ←
+        </Button>
       )}
+      <div className="header-title-group">
+        <span className="header-kicker">Бота</span>
+        <h1 className="header__title">{title}</h1>
+      </div>
+      <CoinBadge coins={appState.coins} />
     </header>
   );
 }

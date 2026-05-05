@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react';
 import Button from '../../components/Button';
+import Card from '../../components/Card';
+import Mascot from '../../components/Mascot';
 
 const pairItems = ['🍬', '🐪', '🏔️'];
 
@@ -48,12 +50,13 @@ function MemoryGame({ finishGame, goToScreen }) {
   };
 
   return (
-    <section className="stack">
-      <div className="card stack">
-        <div className="pill">Алматы</div>
-        <h2 className="section-title">Найди пару</h2>
+    <section className="screen">
+      <Mascot mood="thinking" size="small" speech="Найди одинаковые карточки!" />
+
+      <Card className="stack">
+        <span className="badge badge-muted">Алматы • Память</span>
         <p className="game-question">Открой карточки и найди три одинаковые пары.</p>
-      </div>
+      </Card>
 
       <div className="memory-grid">
         {deck.map((card) => {
@@ -63,7 +66,7 @@ function MemoryGame({ finishGame, goToScreen }) {
             <button
               key={card.id}
               type="button"
-              className={`memory-card ${isOpen ? 'memory-card--open' : ''}`}
+              className={`memory-card ${isOpen ? 'open' : ''}`}
               onClick={() => handleCardClick(card)}
               aria-label={isOpen ? `Карточка ${card.emoji}` : 'Закрытая карточка'}
             >
@@ -74,10 +77,10 @@ function MemoryGame({ finishGame, goToScreen }) {
       </div>
 
       {isComplete && (
-        <div className="game-message game-message--success">
-          Все пары найдены!
-          <span>Факт: игра на пары тренирует память и внимание.</span>
-        </div>
+        <Card className="success-card">
+          <h3>Все пары найдены!</h3>
+          <p>Игры на пары тренируют память и внимание.</p>
+        </Card>
       )}
 
       {isComplete && (

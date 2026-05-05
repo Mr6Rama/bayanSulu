@@ -18,6 +18,12 @@ const defaultAppState = {
   lastReward: null,
 };
 
+const screenAliases = {
+  mathGame: 'math',
+  memoryGame: 'memory',
+  wordsGame: 'words',
+};
+
 function normalizeAppState(state) {
   return {
     ...state,
@@ -29,7 +35,7 @@ function normalizeAppState(state) {
 function App() {
   const [appState, setAppState] = useState(() => normalizeAppState(loadAppState(defaultAppState)));
   const [currentScreen, setCurrentScreen] = useState(() => {
-    const savedScreen = loadScreen('onboarding');
+    const savedScreen = screenAliases[loadScreen('onboarding')] || loadScreen('onboarding');
     const hasProfile = loadAppState(defaultAppState).name;
 
     if (hasProfile && savedScreen === 'onboarding') {
@@ -48,7 +54,7 @@ function App() {
   }, [currentScreen]);
 
   const actions = useMemo(() => ({
-    goToScreen: setCurrentScreen,
+    goToScreen: (screen) => setCurrentScreen(screenAliases[screen] || screen),
     completeOnboarding: (values) => {
       setAppState((prev) => ({
         ...prev,
@@ -97,9 +103,9 @@ function App() {
       {currentScreen === 'reward' && <RewardPage {...screenProps} />}
       {currentScreen === 'shop' && <ShopPage {...screenProps} />}
       {currentScreen === 'parent' && <ParentModePage {...screenProps} />}
-      {currentScreen === 'mathGame' && <MathGame {...screenProps} />}
-      {currentScreen === 'memoryGame' && <MemoryGame {...screenProps} />}
-      {currentScreen === 'wordsGame' && <WordsGame {...screenProps} />}
+      {currentScreen === 'math' && <MathGame {...screenProps} />}
+      {currentScreen === 'memory' && <MemoryGame {...screenProps} />}
+      {currentScreen === 'words' && <WordsGame {...screenProps} />}
     </AppShell>
   );
 }

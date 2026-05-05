@@ -1,20 +1,23 @@
 export const rewards = [
   {
-    id: 'kambot-sticker',
+    id: 'sticker',
     title: 'Стикер КамБота',
     cost: 30,
-    description: 'Весёлый цифровой стикер для маленького исследователя.',
+    icon: '🌟',
+    description: 'Виртуальная награда за первые задания',
   },
   {
-    id: 'mini-coupon',
+    id: 'coupon',
     title: 'Мини-купон',
     cost: 60,
-    description: 'Небольшой бонус за регулярные игры и обучение.',
+    icon: '🎟️',
+    description: 'Концепт бонуса для семьи',
   },
   {
-    id: 'discount-500',
+    id: 'discount',
     title: 'Скидка 500 ₸',
     cost: 100,
-    description: 'Демо-награда для будущей интеграции с офлайн-покупкой.',
+    icon: '🍬',
+    description: 'Пример конвертации ботакоинов в бонус на продукцию',
   },
 ];

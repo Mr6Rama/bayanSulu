@@ -1,5 +1,9 @@
 import { useState } from 'react';
 import Button from '../components/Button';
+import Card from '../components/Card';
+import Mascot from '../components/Mascot';
+import ProgressBar from '../components/ProgressBar';
+import { locations } from '../data/locations';
 
 function ParentModePage({ appState, resetProfile, goToScreen }) {
   const [pin, setPin] = useState('');
@@ -20,9 +24,16 @@ function ParentModePage({ appState, resetProfile, goToScreen }) {
 
   if (!isUnlocked) {
     return (
-      <section className="stack">
-        <form className="card stack" onSubmit={handleSubmit}>
-          <div className="pill">🔒 Режим для родителей</div>
+      <section className="screen">
+        <Mascot
+          mood="parent"
+          size="medium"
+          speech="Родительский режим защищён PIN-кодом."
+        />
+
+        <form className="stack" onSubmit={handleSubmit}>
+          <Card className="stack">
+          <span className="badge badge-muted">PIN: 1234</span>
           <h2 className="section-title">Введите PIN</h2>
           <input
             className="input pin-input"
@@ -32,8 +43,9 @@ function ParentModePage({ appState, resetProfile, goToScreen }) {
             maxLength="4"
             placeholder="1234"
           />
-          {error && <div className="game-message game-message--hint">{error}</div>}
-          <Button type="submit">Открыть</Button>
+          {error && <div className="soft-error">{error}</div>}
+          </Card>
+          <Button type="submit">Войти</Button>
         </form>
 
         <Button variant="secondary" onClick={() => goToScreen('map')}>
@@ -44,11 +56,10 @@ function ParentModePage({ appState, resetProfile, goToScreen }) {
   }
 
   return (
-    <section className="stack">
-      <div className="card stack">
-        <div className="pill">🔒 Режим для родителей</div>
-        <h2 className="section-title">Данные профиля</h2>
-        <div className="stats">
+    <section className="screen">
+      <Card className="stack">
+        <h2 className="section-title">Прогресс ребёнка</h2>
+        <div className="parent-stat-grid">
           <div className="stat">
             <span className="stat__value">{appState.name || '—'}</span>
             <span className="stat__label">имя</span>
@@ -62,13 +73,18 @@ function ParentModePage({ appState, resetProfile, goToScreen }) {
             <span className="stat__label">монет</span>
           </div>
           <div className="stat">
-            <span className="stat__value">{appState.completedGames.length}</span>
-            <span className="stat__label">игр завершено</span>
+            <span className="stat__value">{appState.completedGames.length}/3</span>
+            <span className="stat__label">игр пройдено</span>
           </div>
         </div>
-      </div>
+        <ProgressBar
+          value={appState.completedGames.length}
+          max={locations.length}
+          label={`Пройдено игр ${appState.completedGames.length} из ${locations.length}`}
+        />
+      </Card>
 
-      <div className="card stack">
+      <Card className="stack">
         <h3 className="section-title">Настройки MVP</h3>
         <div className="pill-row">
           <span className="pill">⏱️ 30 минут в день</span>
@@ -76,7 +92,11 @@ function ParentModePage({ appState, resetProfile, goToScreen }) {
           <span className="pill">🧠 память</span>
           <span className="pill">🇰🇿 казахский язык</span>
         </div>
-      </div>
+      </Card>
+
+      <Card className="info-card">
+        Ботакоины начисляются только за развивающие задания, а не за время в приложении.
+      </Card>
 
       <Button variant="secondary" onClick={() => goToScreen('map')}>
         Вернуться к карте

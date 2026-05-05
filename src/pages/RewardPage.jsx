@@ -1,4 +1,6 @@
 import Button from '../components/Button';
+import Card from '../components/Card';
+import Mascot from '../components/Mascot';
 import { locations } from '../data/locations';
 
 function RewardPage({ appState, goToScreen }) {
@@ -8,30 +10,33 @@ function RewardPage({ appState, goToScreen }) {
     : null;
 
   return (
-    <section className="stack">
-      <div className="card stack reward-card">
-        <div className="pill">🎁 Последняя награда</div>
-        <h2 className="reward-title">Жарайсың!</h2>
-        <p className="muted">
-          {lastReward
-            ? `${rewardLocation?.game || 'Игра завершена'}: ${lastReward.message}`
-            : 'Пройди первую игру, чтобы получить ботакоины.'}
-        </p>
-      </div>
+    <section className="screen reward-screen">
+      <Mascot
+        mood="happy"
+        size="large"
+        speech="Жарайсың! Ты отлично справился!"
+      />
 
-      <div className="card stack">
-        <h3 className="section-title">Баланс наград</h3>
-        <div className="stats">
-          <div className="stat">
-            <span className="stat__value">+{lastReward?.coins || 0}</span>
-            <span className="stat__label">получено сейчас</span>
-          </div>
-          <div className="stat">
-            <span className="stat__value">{appState.coins}</span>
-            <span className="stat__label">общий баланс</span>
-          </div>
+      <Card className="reward-card">
+        <div className="coin-burst" aria-hidden="true">
+          <span>🪙</span>
+          <span>✨</span>
+          <span>🪙</span>
         </div>
-      </div>
+        <h2 className="reward-title">Жарайсың!</h2>
+        {lastReward ? (
+          <>
+            <p className="reward-subtitle">{rewardLocation?.subtitle || 'Игра завершена'}</p>
+            <div className="reward-coin">+{lastReward.coins} ботакоинов</div>
+            <p className="muted">Всего: {appState.coins} ботакоинов</p>
+          </>
+        ) : (
+          <>
+            <p className="muted">Пройди первую игру, чтобы получить ботакоины.</p>
+            <p className="muted">Всего: {appState.coins} ботакоинов</p>
+          </>
+        )}
+      </Card>
 
       <Button onClick={() => goToScreen('map')}>
         Вернуться на карту

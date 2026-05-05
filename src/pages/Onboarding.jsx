@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import Button from '../components/Button';
+import Card from '../components/Card';
+import Mascot from '../components/Mascot';
 
 const ages = ['7', '8', '9', '10', '11'];
 
@@ -10,30 +12,26 @@ function Onboarding({ completeOnboarding }) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (!name.trim() || !age) {
-      alert('Пожалуйста, укажи имя и возраст.');
-      return;
-    }
-
     completeOnboarding({
-      name: name.trim(),
+      name: name.trim() || 'Дос',
       age,
     });
   };
 
   return (
-    <section className="stack">
-      <div className="hero card onboarding-hero">
-        <div className="kambot-avatar">🤖</div>
-        <div className="hero__badge pill">КамБот рядом</div>
-        <h2 className="section-title">Сәлем! Я КамБот.</h2>
-        <p className="muted">
-          Давай отправимся по городам Казахстана, будем играть, учиться и собирать
-          ботакоины.
-        </p>
-      </div>
+    <section className="screen onboarding-screen">
+      <Mascot
+        mood="main"
+        size="large"
+        speech="Привет! Я КамБот. Давай отправимся в путешествие по Казахстану?"
+      />
 
-      <form className="card stack" onSubmit={handleSubmit}>
+      <form className="stack" onSubmit={handleSubmit}>
+        <Card className="stack">
+          <h2 className="section-title">Твоё путешествие начинается</h2>
+          <p className="muted">Выбери имя и возраст, чтобы КамБот запомнил твой прогресс.</p>
+        </Card>
+
         <label>
           <span className="field-label">Имя</span>
           <input
@@ -51,7 +49,7 @@ function Onboarding({ completeOnboarding }) {
               <button
                 key={item}
                 type="button"
-                className={`age-button ${age === item ? 'age-button--active' : ''}`}
+                className={`age-chip ${age === item ? 'active' : ''}`}
                 onClick={() => setAge(item)}
               >
                 {item}
@@ -62,6 +60,14 @@ function Onboarding({ completeOnboarding }) {
 
         <Button type="submit">Начать путешествие</Button>
       </form>
+
+      <div className="ornament-strip" aria-hidden="true">
+        <span>◆</span>
+        <span>●</span>
+        <span>◆</span>
+        <span>●</span>
+        <span>◆</span>
+      </div>
     </section>
   );
 }

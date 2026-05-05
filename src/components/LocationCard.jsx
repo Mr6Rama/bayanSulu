@@ -1,22 +1,26 @@
-import Button from './Button';
-
-function LocationCard({ city, game, hint, emoji, theme, isCompleted, onClick }) {
+function LocationCard({
+  title,
+  subtitle,
+  icon,
+  completed = false,
+  locked = false,
+  onClick,
+}) {
   return (
-    <Button
-      className={`location-card location-card--${theme} ${isCompleted ? 'location-card--done' : ''}`}
-      variant="secondary"
+    <button
+      type="button"
+      className={`location-card ${completed ? 'completed' : ''}`}
+      disabled={locked}
       onClick={onClick}
     >
-      <span className="location-card__emoji">{emoji}</span>
-      <span>
-        <span className="location-card__city">
-          {city}
-          {isCompleted && <span className="location-card__check">✓</span>}
-        </span>
-        <span className="location-card__game">{game}</span>
-        <span className="location-card__hint">{hint}</span>
+      <span className="location-card-icon">{icon}</span>
+      <span className="location-card-body">
+        <span className="location-card-title">{title}</span>
+        <span className="location-card-subtitle">{subtitle}</span>
+        {completed && <span className="badge badge-success">✓ Пройдено</span>}
+        {locked && <span className="badge badge-muted">Скоро</span>}
       </span>
-    </Button>
+    </button>
   );
 }
 

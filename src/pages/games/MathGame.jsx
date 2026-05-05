@@ -1,32 +1,43 @@
 import { useState } from 'react';
 import Button from '../../components/Button';
+import Card from '../../components/Card';
+import Mascot from '../../components/Mascot';
 
 const answers = [4, 5, 6];
 const correctAnswer = 5;
 
 function MathGame({ finishGame, goToScreen }) {
   const [status, setStatus] = useState('idle');
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
 
   const handleAnswer = (answer) => {
+    setSelectedAnswer(answer);
     setStatus(answer === correctAnswer ? 'success' : 'hint');
   };
 
   return (
-    <section className="stack">
-      <div className="card stack">
-        <div className="pill">Астана</div>
-        <h2 className="section-title">Счёт с КамБотом</h2>
+    <section className="screen">
+      <Mascot
+        mood="thinking"
+        size="small"
+        speech="Посчитай конфеты вместе со мной!"
+      />
+
+      <Card className="stack">
+        <span className="badge badge-muted">Астана • Счёт</span>
         <p className="game-question">
           У КамБота было 2 конфеты. Он нашёл ещё 3. Сколько стало?
         </p>
-      </div>
+      </Card>
 
       <div className="game-options">
         {answers.map((answer) => (
           <button
             key={answer}
             type="button"
-            className="answer-button"
+            className={`answer-option ${
+              selectedAnswer === answer && status === 'success' ? 'correct' : ''
+            } ${selectedAnswer === answer && status === 'hint' ? 'wrong' : ''}`}
             onClick={() => handleAnswer(answer)}
           >
             {answer}
@@ -35,14 +46,14 @@ function MathGame({ finishGame, goToScreen }) {
       </div>
 
       {status === 'hint' && (
-        <div className="game-message game-message--hint">Попробуй ещё раз</div>
+        <Card className="info-card warning-card">Попробуй ещё раз — ты близко!</Card>
       )}
 
       {status === 'success' && (
-        <div className="game-message game-message--success">
-          Правильно! 2 + 3 = 5.
-          <span>Факт: счёт помогает быстро делить сладости поровну.</span>
-        </div>
+        <Card className="success-card">
+          <h3>Правильно! 2 + 3 = 5.</h3>
+          <p>Счёт помогает быстро решать задачи в магазине и дома.</p>
+        </Card>
       )}
 
       {status === 'success' && (

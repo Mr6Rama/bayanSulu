@@ -1,15 +1,20 @@
-function Button({ children, variant = 'primary', className = '', ...props }) {
-  const variantClass =
-    variant === 'secondary'
-      ? 'button button--secondary'
-      : variant === 'chip'
-        ? 'chip-button'
-        : variant === 'chip-active'
-          ? 'chip-button chip-button--active'
-          : 'button';
+function Button({
+  children,
+  variant = 'primary',
+  className = '',
+  type = 'button',
+  disabled = false,
+  ...props
+}) {
+  const variantClass = `btn btn-${variant}`;
 
   return (
-    <button type="button" className={`${variantClass} ${className}`.trim()} {...props}>
+    <button
+      type={type}
+      className={`${variantClass} ${className}`.trim()}
+      disabled={disabled}
+      {...props}
+    >
       {children}
     </button>
   );
