@@ -95,6 +95,7 @@ function App() {
         : loadApprovedCoupons([]),
     };
   });
+  const [studioHighlightId, setStudioHighlightId] = useState(null);
   const [currentScreen, setCurrentScreen] = useState(() => {
     const savedScreen = screenAliases[loadScreen('onboarding')] || loadScreen('onboarding');
     const hasProfile = loadAppState(defaultAppState).name;
@@ -123,7 +124,13 @@ function App() {
   }, [currentScreen]);
 
   const actions = useMemo(() => ({
-    goToScreen: (screen) => setCurrentScreen(screenAliases[screen] || screen),
+    goToScreen: (screen, options = {}) => {
+      if (options?.newlyUnlocked) {
+        setStudioHighlightId(options.newlyUnlocked);
+      }
+
+      setCurrentScreen(screenAliases[screen] || screen);
+    },
     completeOnboarding: (values) => {
       setAppState((prev) => ({
         ...prev,
@@ -327,12 +334,13 @@ function App() {
           collectibleAlreadyUnlocked: alreadyUnlocked || alreadyCompleted,
           learningReceipt,
         },
-      };
-    });
+        };
+      });
       setCurrentScreen('reward');
     },
     resetProfile: () => {
       setAppState(defaultAppState);
+      setStudioHighlightId(null);
       setCurrentScreen('onboarding');
     },
   }), []);
@@ -348,7 +356,7 @@ function App() {
       {currentScreen === 'onboarding' && <Onboarding {...screenProps} />}
       {currentScreen === 'map' && <MapPage {...screenProps} />}
       {currentScreen === 'reward' && <RewardPage {...screenProps} />}
-      {currentScreen === 'studio' && <BotaStudioPage {...screenProps} />}
+      {currentScreen === 'studio' && <BotaStudioPage {...screenProps} newlyUnlockedId={studioHighlightId} />}
       {currentScreen === 'shop' && <ShopPage {...screenProps} />}
       {currentScreen === 'parent' && <ParentModePage {...screenProps} />}
       {currentScreen === 'math' && <MathGame {...screenProps} />}
