@@ -1,3 +1,4 @@
+import React from 'react';
 import CoinBadge from './CoinBadge';
 import Button from './Button';
 
@@ -5,8 +6,9 @@ const titleMap = {
   onboarding: 'Bayan Sulu Kids',
   map: 'Карта путешествия',
   reward: 'Награда',
-  shop: 'Магазин бонусов',
-  parent: 'Parent Mode',
+  studio: 'Мой мир Боты',
+  shop: 'Семейные бонусы',
+  parent: 'Bota Balance',
   math: 'Счёт с КамБотом',
   memory: 'Найди пару',
   words: 'Қазақша сөздер',
@@ -14,6 +16,7 @@ const titleMap = {
 
 const backTargets = {
   reward: 'map',
+  studio: 'map',
   shop: 'map',
   parent: 'map',
   math: 'map',

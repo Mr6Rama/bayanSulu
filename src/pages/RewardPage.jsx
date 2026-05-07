@@ -1,33 +1,40 @@
+import React from 'react';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Mascot from '../components/Mascot';
-import { locations } from '../data/locations';
-import { learningUnits } from '../data/learningUnits';
-
-const badgeLabels = {
-  memory: 'Мастер памяти',
-  math: 'Юный математик',
-  words: 'Знаток казахских слов',
-};
+import { collectibleByGameId, collectibleGames, learningReceiptByGameId } from '../data/collectibles';
 
 const allGameIds = ['math', 'memory', 'words'];
-const rewardLearningMap = {
-  math: ['astana', 'yurt'],
-  memory: ['charyn', 'apple'],
-  words: ['camel', 'apple'],
+
+const skillLabelByGameId = {
+  memory: 'память',
+  math: 'счёт',
+  words: 'казахский язык',
 };
+
+function getNextHint(appState) {
+  const completedGames = Array.isArray(appState.completedGames) ? appState.completedGames : [];
+  const remainingGameId = allGameIds.find((gameId) => !completedGames.includes(gameId));
+
+  if (!remainingGameId) {
+    return 'Скоро откроются Чарын, Домбра и новые аксессуары КамБота.';
+  }
+
+  const collectible = collectibleByGameId[remainingGameId];
+
+  if (!collectible) {
+    return 'Продолжай проходить игры, чтобы открывать новые предметы для мира Боты.';
+  }
+
+  return `Пройди «${collectibleGames[remainingGameId]}», чтобы открыть ${collectible.title}.`;
+}
 
 function RewardPage({ appState, goToScreen }) {
   const lastReward = appState.lastReward;
-  const rewardLocation = lastReward
-    ? locations.find((location) => location.id === lastReward.gameId)
-    : null;
-  const hasAllGames = allGameIds.every((gameId) => appState.completedGames.includes(gameId));
-  const badge = hasAllGames
-    ? 'Исследователь Казахстана'
-    : badgeLabels[lastReward?.gameId] || 'Исследователь Казахстана';
-  const learningIds = rewardLearningMap[lastReward?.gameId] || [];
-  const rewardLearningUnits = learningUnits.filter((unit) => learningIds.includes(unit.id));
+  const collectible = lastReward?.gameId ? collectibleByGameId[lastReward.gameId] : null;
+  const receipt = lastReward?.learningReceipt || learningReceiptByGameId[lastReward?.gameId] || null;
+  const isRepeat = Boolean(lastReward?.alreadyReceived);
+  const nextHint = getNextHint(appState);
 
   return (
     <section className="screen reward-screen">
@@ -43,43 +50,68 @@ function RewardPage({ appState, goToScreen }) {
           <span>✨</span>
           <span>🪙</span>
         </div>
-        <h2 className="reward-title">Жарайсың!</h2>
+        <h2 className="reward-title">
+          {isRepeat ? 'Награда уже получена' : 'Предмет открыт'}
+        </h2>
         {lastReward ? (
           <>
-            <p className="reward-subtitle">{rewardLocation?.subtitle || 'Игра завершена'}</p>
-            <span className="badge badge-success">{badge}</span>
+            <p className="reward-subtitle">
+              {isRepeat ? 'Предмет уже в твоём мире' : 'Предмет добавлен в мир Боты'}
+            </p>
+            {collectible && (
+              <div className="reward-collectible">
+                <div className="reward-collectible__icon" aria-hidden="true">
+                  {collectible.icon}
+                </div>
+                <div className="reward-collectible__body">
+                  <span className="badge badge-success">{collectible.category}</span>
+                  <h3 className="reward-collectible__title">{collectible.title}</h3>
+                  <p className="muted">{collectible.learning}</p>
+                </div>
+              </div>
+            )}
             <div className="reward-coin">
-              {lastReward.alreadyReceived ? 'Награда уже получена' : `+${lastReward.coins} ботакоинов`}
+              {isRepeat ? 'Награда уже получена' : `+${lastReward.coins} ботакоинов`}
             </div>
             <p className="muted">
-              {lastReward.alreadyReceived
-                ? `Эта игра уже завершена. Всего: ${appState.coins} ботакоинов`
+              {isRepeat
+                ? `Этот предмет уже открыт. Всего: ${appState.coins} ботакоинов`
                 : `Всего: ${appState.coins} ботакоинов`}
             </p>
           </>
         ) : (
           <>
-            <p className="muted">Пройди первую игру, чтобы получить ботакоины.</p>
+            <p className="muted">Пройди первую игру, чтобы получить ботакоины и предмет для мира.</p>
             <p className="muted">Всего: {appState.coins} ботакоинов</p>
           </>
         )}
       </Card>
 
-      {lastReward && rewardLearningUnits.length > 0 && (
+      {lastReward && receipt && (
         <Card className="stack">
-          <h3 className="section-title">Что ребёнок изучает</h3>
+          <h3 className="section-title">Learning Receipt</h3>
           <div className="stack">
-            {rewardLearningUnits.map((unit) => (
-              <div key={unit.id} className="learning-unit">
-                <strong>{unit.title}</strong>
-                <p className="muted">{unit.note}</p>
-              </div>
-            ))}
+            <div className="learning-unit">
+              <strong>Навык: {skillLabelByGameId[lastReward.gameId]}</strong>
+              <p className="muted">{receipt.done}</p>
+            </div>
+            <div className="learning-unit">
+              <strong>Что изучено</strong>
+              <p className="muted">{receipt.learned}</p>
+            </div>
           </div>
         </Card>
       )}
 
-      <Button onClick={() => goToScreen('map')}>
+      <Card className="info-card">
+        <h3 className="section-title">Следующее открытие</h3>
+        <p className="muted">{nextHint}</p>
+      </Card>
+
+      <Button variant="primary" onClick={() => goToScreen('studio')}>
+        {isRepeat ? 'Открыть Мой мир Боты' : 'Добавить в мой мир'}
+      </Button>
+      <Button variant="secondary" onClick={() => goToScreen('map')}>
         Вернуться на карту
       </Button>
       <Button variant="secondary" onClick={() => goToScreen('shop')}>

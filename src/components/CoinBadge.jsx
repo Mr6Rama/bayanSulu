@@ -1,3 +1,4 @@
+import React from 'react';
 function CoinBadge({ coins }) {
   return (
     <div className="coin-badge" aria-label={`${coins} ботакоинов`}>

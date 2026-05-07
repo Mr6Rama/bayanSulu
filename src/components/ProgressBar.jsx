@@ -1,3 +1,4 @@
+import React from 'react';
 function ProgressBar({ value, max, label }) {
   const safeMax = Math.max(max, 1);
   const percent = Math.min(100, Math.max(0, (value / safeMax) * 100));

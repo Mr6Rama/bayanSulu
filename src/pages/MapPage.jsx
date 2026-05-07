@@ -1,3 +1,4 @@
+import React from 'react';
 import { useState } from 'react';
 import { locations } from '../data/locations';
 import LocationCard from '../components/LocationCard';
@@ -11,14 +12,16 @@ function MapPage({ appState, goToScreen }) {
   const completedCount = availableLocations.filter((location) =>
     appState.completedGames.includes(location.gameId),
   ).length;
-  const nextLocation = availableLocations.find(
-    (location) => !appState.completedGames.includes(location.gameId),
-  ) || locations.find((location) => location.status === 'locked');
+  const nextLocation =
+    availableLocations.find((location) => !appState.completedGames.includes(location.gameId)) ||
+    locations.find((location) => location.status === 'locked');
   const [routeMessage, setRouteMessage] = useState('');
 
   const handleLocationClick = (location) => {
     if (location.status === 'locked') {
-      setRouteMessage('Локация откроется после новых заданий или QR-кода на упаковке “Бота”.');
+      setRouteMessage(
+        'Локация откроется после новых заданий или QR-кода на упаковке «Бота».',
+      );
       return;
     }
 
@@ -62,6 +65,10 @@ function MapPage({ appState, goToScreen }) {
       </Card>
 
       {routeMessage && <Card className="info-card warning-card">{routeMessage}</Card>}
+
+      <Button variant="secondary" onClick={() => goToScreen('studio')}>
+        Мой мир Боты
+      </Button>
 
       <div className="route-list">
         {locations.map((location) => (

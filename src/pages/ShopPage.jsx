@@ -1,24 +1,57 @@
-import { useState } from 'react';
+import React from 'react';
+import { useMemo, useState } from 'react';
 import { rewards } from '../data/rewards';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Mascot from '../components/Mascot';
 
-function getDemoCode(rewardId) {
-  return `BOTA-${rewardId.toUpperCase()}`;
+function getRequestState(appState, rewardId) {
+  return appState.rewardRequests.find((request) => request.rewardId === rewardId) || null;
 }
 
-function ShopPage({ appState, goToScreen, purchaseReward }) {
-  const [receipt, setReceipt] = useState(null);
+function ShopPage({ appState, goToScreen, requestFamilyBonus }) {
+  const [notice, setNotice] = useState('');
 
-  const handleExchange = (reward) => {
-    const result = purchaseReward(reward);
+  const openStudioCount = Array.isArray(appState.unlockedCollectibles) ? appState.unlockedCollectibles.length : 0;
+  const completedGamesCount = Array.isArray(appState.completedGames) ? appState.completedGames.length : 0;
+  const screenTimeMinutes = appState.screenTimeMinutes ?? 18;
 
-    setReceipt({
-      ...result,
-      code: getDemoCode(reward.id),
-      spentCoins: result.status === 'purchased' ? reward.cost : 0,
-    });
+  const rewardCards = useMemo(
+    () =>
+      rewards.map((reward) => {
+        const request = getRequestState(appState, reward.id);
+        const missing = [];
+
+        if (appState.coins < reward.cost) {
+          missing.push(`Нужно ещё ${reward.cost - appState.coins} ботакоинов`);
+        }
+
+        if (completedGamesCount < reward.requiredGames) {
+          missing.push(`Осталось пройти ${reward.requiredGames - completedGamesCount} образовательную игру`);
+        }
+
+        if (openStudioCount < reward.requiredCollectibles) {
+          missing.push(`Открой ещё ${reward.requiredCollectibles - openStudioCount} предмет в Bota Studio`);
+        }
+
+        if (screenTimeMinutes > reward.screenTimeLimit) {
+          missing.push(`Экранное время: ${screenTimeMinutes}/${reward.screenTimeLimit} минут`);
+        }
+
+        return { reward, request, missing };
+      }),
+    [appState.coins, appState.rewardRequests, completedGamesCount, openStudioCount, screenTimeMinutes],
+  );
+
+  const handleRequest = (reward) => {
+    const result = requestFamilyBonus(reward);
+
+    if (result.status === 'blocked') {
+      setNotice(result.missing[0] || 'Не хватает условий для семейного бонуса.');
+      return;
+    }
+
+    setNotice(result.message || 'Запрос отправлен родителю');
   };
 
   return (
@@ -26,74 +59,80 @@ function ShopPage({ appState, goToScreen, purchaseReward }) {
       <Mascot
         mood="main"
         size="medium"
-        speech="Обменивай ботакоины на семейные бонусы!"
+        speech="Запроси семейный бонус у родителя, когда образовательный прогресс готов."
       />
 
       <Card className="stack">
-        <h2 className="section-title">Магазин наград</h2>
+        <h2 className="section-title">Семейные бонусы</h2>
+        <p className="muted">Ботакоины выдаются только за образовательные задания.</p>
         <p className="muted">Баланс: {appState.coins} ботакоинов.</p>
       </Card>
 
       <Card className="info-card">
-        Сканируй QR на упаковке «Бота», чтобы открыть новые бонусы.
+        Не играй дольше - учись коротко и получай семейный бонус с разрешения родителя.
       </Card>
 
+      {notice && <Card className="info-card warning-card">{notice}</Card>}
+
       <div className="shop-grid">
-        {rewards.map((reward) => {
-          const isPurchased = appState.purchasedRewards.includes(reward.id);
-          const missingCoins = reward.cost - appState.coins;
-          const canExchange = !isPurchased && missingCoins <= 0;
+        {rewardCards.map(({ reward, request, missing }) => {
+          const isPending = request?.status === 'pending';
+          const isApproved = request?.status === 'approved';
+          const isDeclined = request?.status === 'declined';
+          const canRequest = missing.length === 0 && !isPending && !isApproved;
 
           return (
-            <Card key={reward.id} className="card shop-card">
+            <Card key={reward.id} className="stack shop-card">
               <span className="shop-card-icon">{reward.icon}</span>
               <div>
                 <h3 className="shop-card-title">{reward.title}</h3>
                 <span className="shop-card__cost">{reward.cost} ботакоинов</span>
               </div>
               <p className="muted">{reward.description}</p>
-              <span className={`badge ${isPurchased ? 'badge-success' : canExchange ? 'badge-success' : 'badge-muted'}`}>
-                {isPurchased ? 'Уже получено' : canExchange ? 'Доступно' : `Нужно ещё ${missingCoins} ботакоинов`}
+
+              <div className="stack">
+                <span className="badge badge-muted">{reward.bonusLabel}</span>
+                <div className="shop-conditions">
+                  <span>✓ {reward.cost} ботакоинов</span>
+                  <span>✓ {reward.requiredGames} образовательные игры</span>
+                  <span>✓ {reward.requiredCollectibles} предмета в Bota Studio</span>
+                  <span>✓ экранное время: {screenTimeMinutes}/{reward.screenTimeLimit} минут</span>
+                  <span>✓ подтверждение родителя</span>
+                </div>
+              </div>
+
+              <span className={`badge ${isApproved ? 'badge-success' : isPending ? 'badge-muted' : isDeclined ? 'badge-muted' : canRequest ? 'badge-success' : 'badge-muted'}`}>
+                {isApproved
+                  ? 'Одобрено родителем'
+                  : isPending
+                    ? 'Запрос отправлен родителю'
+                    : isDeclined
+                      ? 'Родитель оставил на потом'
+                      : missing.length > 0
+                        ? missing[0]
+                        : 'Готово к запросу'}
               </span>
+
               <Button
                 type="button"
-                variant={isPurchased ? 'secondary' : 'primary'}
-                disabled={isPurchased}
-                onClick={() => handleExchange(reward)}
+                variant={isPending || isApproved ? 'secondary' : 'primary'}
+                disabled={isPending || isApproved}
+                onClick={() => handleRequest(reward)}
               >
-                {isPurchased ? 'Уже получено' : 'Обменять'}
+                {isApproved ? 'Запрос одобрен' : isPending ? 'Запрос отправлен родителю' : 'Запросить у родителя'}
               </Button>
+
+              {missing.length > 0 && !isPending && !isApproved && (
+                <div className="shop-missing-list">
+                  {missing.map((item) => (
+                    <span key={item}>{item}</span>
+                  ))}
+                </div>
+              )}
             </Card>
           );
         })}
       </div>
-
-      {receipt && (
-        <Card className="stack">
-          <h3 className="section-title">
-            {receipt.status === 'purchased'
-              ? 'Купон создан'
-              : receipt.status === 'already-owned'
-                ? 'Уже получено'
-                : 'Не хватает ботакоинов'}
-          </h3>
-          <p className="muted">
-            {receipt.status === 'purchased'
-              ? `Демо-код: ${receipt.code}`
-              : receipt.status === 'already-owned'
-                ? `Эта награда уже куплена. Демо-код: ${receipt.code}`
-                : `Нужно ещё ${receipt.missingCoins} ботакоинов`}
-          </p>
-          <p className="muted">Купон активирует родитель.</p>
-          <p className="muted">В MVP это демонстрация механики обмена ботакоинов на семейный бонус.</p>
-          {receipt.status === 'purchased' && (
-            <p className="muted">Списано: {receipt.spentCoins} ботакоинов.</p>
-          )}
-          {receipt.status === 'already-owned' && (
-            <p className="muted">Списание не требуется.</p>
-          )}
-        </Card>
-      )}
 
       <Button variant="secondary" onClick={() => goToScreen('map')}>
         Назад на карту

@@ -430,6 +430,105 @@ button.card {
   gap: 12px;
 }
 
+.collectibles-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.collectible-card {
+  display: grid;
+  gap: 12px;
+  min-height: 220px;
+  padding: 16px;
+  border-radius: var(--radius-lg);
+}
+
+.collectible-card.open {
+  background: linear-gradient(180deg, #fff, #f1fbf5);
+  border-color: rgba(104, 185, 132, 0.7);
+}
+
+.collectible-card.locked {
+  background: linear-gradient(180deg, #fff, #f8f0db);
+  border-style: dashed;
+  opacity: 0.88;
+}
+
+.collectible-card__icon {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 22px;
+  background: var(--bg-soft);
+  font-size: 30px;
+  box-shadow: inset 0 -4px 0 rgba(217, 130, 24, 0.1);
+}
+
+.collectible-card__body {
+  display: grid;
+  gap: 8px;
+}
+
+.collectible-card__title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.15;
+  font-weight: 900;
+}
+
+.collectible-card__text {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 800;
+}
+
+.reward-collectible {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  width: 100%;
+  padding: 14px;
+  border-radius: var(--radius-md);
+  background: rgba(104, 185, 132, 0.08);
+  border: 2px solid rgba(104, 185, 132, 0.18);
+  text-align: left;
+}
+
+.reward-collectible__icon {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 22px;
+  background: #fff;
+  font-size: 30px;
+}
+
+.reward-collectible__body {
+  display: grid;
+  gap: 6px;
+}
+
+.reward-collectible__title {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.1;
+  font-weight: 900;
+}
+
+.bota-studio-hero {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 247, 226, 0.96));
+}
+
+.bota-studio-hero__copy {
+  display: grid;
+  gap: 6px;
+}
+
 .location-card {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -728,6 +827,31 @@ button.card {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
+}
+
+.shop-conditions {
+  display: grid;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.shop-missing-list {
+  display: grid;
+  gap: 6px;
+  color: var(--warning);
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.learning-unit {
+  display: grid;
+  gap: 5px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 248, 232, 0.86);
+  border: 1px solid rgba(243, 214, 162, 0.72);
 }
 
 .stat {
