@@ -15,6 +15,7 @@ const defaultAppState = {
   age: '',
   coins: 0,
   completedGames: [],
+  purchasedRewards: [],
   lastReward: null,
 };
 
@@ -24,12 +25,36 @@ const screenAliases = {
   wordsGame: 'words',
 };
 
+const badgeByGame = {
+  memory: 'Мастер памяти',
+  math: 'Юный математик',
+  words: 'Знаток казахских слов',
+};
+
+const allGameIds = ['math', 'memory', 'words'];
+
 function normalizeAppState(state) {
+  const completedGames = Array.isArray(state.completedGames) ? [...new Set(state.completedGames)] : [];
+  const purchasedRewards = Array.isArray(state.purchasedRewards)
+    ? [...new Set(state.purchasedRewards)]
+    : [];
+
   return {
     ...state,
-    completedGames: Array.isArray(state.completedGames) ? state.completedGames : [],
+    completedGames,
+    purchasedRewards,
     lastReward: typeof state.lastReward === 'object' ? state.lastReward : null,
   };
+}
+
+function getBadge(completedGames, gameId) {
+  const normalizedGames = Array.isArray(completedGames) ? completedGames : [];
+
+  if (allGameIds.every((id) => normalizedGames.includes(id))) {
+    return 'Исследователь Казахстана';
+  }
+
+  return badgeByGame[gameId] || 'Исследователь Казахстана';
 }
 
 function App() {
@@ -69,17 +94,70 @@ function App() {
         coins: Math.max(0, prev.coins + amount),
       }));
     },
+    purchaseReward: (reward) => {
+      let result = {
+        status: 'not-enough',
+        reward,
+        missingCoins: reward.cost,
+      };
+
+      setAppState((prev) => {
+        const alreadyPurchased = prev.purchasedRewards.includes(reward.id);
+        const hasEnoughCoins = prev.coins >= reward.cost;
+
+        if (!hasEnoughCoins) {
+          result = {
+            status: 'not-enough',
+            reward,
+            missingCoins: reward.cost - prev.coins,
+          };
+          return prev;
+        }
+
+        if (alreadyPurchased) {
+          result = {
+            status: 'already-owned',
+            reward,
+            missingCoins: 0,
+          };
+          return prev;
+        }
+
+        result = {
+          status: 'purchased',
+          reward,
+          missingCoins: 0,
+        };
+
+        return {
+          ...prev,
+          coins: prev.coins - reward.cost,
+          purchasedRewards: [...prev.purchasedRewards, reward.id],
+        };
+      });
+
+      return result;
+    },
     finishGame: (gameId, coinsAmount) => {
       setAppState((prev) => ({
         ...prev,
-        coins: prev.coins + coinsAmount,
+        coins: prev.completedGames.includes(gameId) ? prev.coins : prev.coins + coinsAmount,
         completedGames: prev.completedGames.includes(gameId)
           ? prev.completedGames
           : [...prev.completedGames, gameId],
         lastReward: {
           gameId,
-          coins: coinsAmount,
-          message: `Ты получил ${coinsAmount} ботакоинов!`,
+          coins: prev.completedGames.includes(gameId) ? 0 : coinsAmount,
+          alreadyReceived: prev.completedGames.includes(gameId),
+          badge: getBadge(
+            prev.completedGames.includes(gameId)
+              ? prev.completedGames
+              : [...prev.completedGames, gameId],
+            gameId,
+          ),
+          message: prev.completedGames.includes(gameId)
+            ? 'Награда уже получена'
+            : `Ты получил ${coinsAmount} ботакоинов!`,
         },
       }));
       setCurrentScreen('reward');

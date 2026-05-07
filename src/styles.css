@@ -418,6 +418,12 @@ button.card {
     linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 247, 226, 0.96));
 }
 
+.map-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
 .route-list,
 .shop-grid {
   display: grid;
@@ -445,6 +451,12 @@ button.card {
 .location-card.completed {
   border-color: rgba(104, 185, 132, 0.72);
   background: linear-gradient(135deg, #fff 0%, #edfbef 100%);
+}
+
+.location-card.locked {
+  opacity: 0.82;
+  border-style: dashed;
+  background: linear-gradient(135deg, #fff 0%, #f8f0db 100%);
 }
 
 .location-card-icon {
@@ -475,6 +487,13 @@ button.card {
   color: var(--text-muted);
   font-size: 15px;
   font-weight: 800;
+}
+
+.location-card-meta {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 700;
 }
 
 .badge {
