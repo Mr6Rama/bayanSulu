@@ -158,7 +158,14 @@ const visualMap = {
   kambotBackpack: KambotBackpackVisual,
 };
 
-export function CollectibleVisual({ visualKey, locked = false, size = 'medium', highlighted = false, className = '' }) {
+export function CollectibleVisual({
+  visualKey,
+  locked = false,
+  size = 'medium',
+  highlighted = false,
+  className = '',
+  unlockHint = '',
+}) {
   const Visual = visualMap[visualKey] || AlmatyMountainsVisual;
 
   return (
@@ -171,12 +178,18 @@ export function CollectibleVisual({ visualKey, locked = false, size = 'medium', 
         className,
       ]
         .filter(Boolean)
-      .join(' ')}
+        .join(' ')}
     >
       {locked && <span className="world-item-mist" aria-hidden="true" />}
       {highlighted && <span className="world-item-glow" aria-hidden="true" />}
       <Visual />
-      {locked && <span className="world-item-lock">LOCK</span>}
+      {locked && (
+        <div className="world-item-silhouette" aria-hidden="true">
+          <span className="world-item-silhouette__shape" />
+          {unlockHint && <span className="world-item-silhouette__text">{unlockHint}</span>}
+        </div>
+      )}
+      {locked && <span className="world-item-lock">Закрыто</span>}
       {highlighted && <span className="world-item-spark world-item-spark--1" aria-hidden="true" />}
       {highlighted && <span className="world-item-spark world-item-spark--2" aria-hidden="true" />}
       {highlighted && <span className="world-item-spark world-item-spark--3" aria-hidden="true" />}

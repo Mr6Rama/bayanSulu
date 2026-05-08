@@ -1,5 +1,4 @@
-import React from 'react';
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { rewards } from '../data/rewards';
 import Button from '../components/Button';
 import Card from '../components/Card';
@@ -7,6 +6,15 @@ import Mascot from '../components/Mascot';
 
 function getRequestState(appState, rewardId) {
   return appState.rewardRequests.find((request) => request.rewardId === rewardId) || null;
+}
+
+function pluralize(count, forms) {
+  const mod10 = count % 10;
+  const mod100 = count % 100;
+
+  if (mod10 === 1 && mod100 !== 11) return forms[0];
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 10 || mod100 >= 20)) return forms[1];
+  return forms[2];
 }
 
 function ShopPage({ appState, goToScreen, requestFamilyBonus }) {
@@ -27,15 +35,17 @@ function ShopPage({ appState, goToScreen, requestFamilyBonus }) {
         }
 
         if (completedGamesCount < reward.requiredGames) {
-          missing.push(`Осталось пройти ${reward.requiredGames - completedGamesCount} образовательную игру`);
+          const diff = reward.requiredGames - completedGamesCount;
+          missing.push(`Пройди ещё ${diff} ${pluralize(diff, ['игру', 'игры', 'игр'])}`);
         }
 
         if (openStudioCount < reward.requiredCollectibles) {
-          missing.push(`Открой ещё ${reward.requiredCollectibles - openStudioCount} предмет в Bota Studio`);
+          const diff = reward.requiredCollectibles - openStudioCount;
+          missing.push(`Открой ещё ${diff} ${pluralize(diff, ['предмет', 'предмета', 'предметов'])}`);
         }
 
         if (screenTimeMinutes > reward.screenTimeLimit) {
-          missing.push(`Экранное время: ${screenTimeMinutes}/${reward.screenTimeLimit} минут`);
+          missing.push('Нужно подтверждение родителя');
         }
 
         return { reward, request, missing };
@@ -55,21 +65,20 @@ function ShopPage({ appState, goToScreen, requestFamilyBonus }) {
   };
 
   return (
-    <section className="screen">
+    <section className="screen shop-screen">
       <Mascot
         mood="main"
         size="medium"
-        speech="Запроси семейный бонус у родителя, когда образовательный прогресс готов."
+        speech="Семейный бонус открывается за развивающие задания."
       />
 
-      <Card className="stack">
-        <h2 className="section-title">Семейные бонусы</h2>
-        <p className="muted">Ботакоины выдаются только за образовательные задания.</p>
+      <Card className="stack shop-hero-card">
+        <h2 className="section-title">Бонусы для семьи</h2>
+        <p className="muted">Ботакоины выдаются только за развивающие задания, а не за время в приложении.</p>
+        <div className="shop-trust-block">
+          <strong>Ботакоины выдаются только за развивающие задания, а не за время в приложении.</strong>
+        </div>
         <p className="muted">Баланс: {appState.coins} ботакоинов.</p>
-      </Card>
-
-      <Card className="info-card">
-        Не играй дольше - учись коротко и получай семейный бонус с разрешения родителя.
       </Card>
 
       {notice && <Card className="info-card warning-card">{notice}</Card>}
@@ -79,47 +88,60 @@ function ShopPage({ appState, goToScreen, requestFamilyBonus }) {
           const isPending = request?.status === 'pending';
           const isApproved = request?.status === 'approved';
           const isDeclined = request?.status === 'declined';
-          const canRequest = missing.length === 0 && !isPending && !isApproved;
+          const isLocked = missing.length > 0 && !isPending && !isApproved;
+          const buttonState = isApproved
+            ? 'approved'
+            : isPending
+              ? 'pending'
+              : isLocked
+                ? 'locked'
+                : 'available';
+          const buttonLabel = {
+            available: 'Попросить родителя',
+            pending: 'Ожидает решения',
+            approved: 'Купон одобрен',
+            locked: 'Пока закрыто',
+          }[buttonState];
 
           return (
-            <Card key={reward.id} className="stack shop-card">
-              <span className="shop-card-icon">{reward.icon}</span>
-              <div>
-                <h3 className="shop-card-title">{reward.title}</h3>
-                <span className="shop-card__cost">{reward.cost} ботакоинов</span>
-              </div>
-              <p className="muted">{reward.description}</p>
-
-              <div className="stack">
-                <span className="badge badge-muted">{reward.bonusLabel}</span>
-                <div className="shop-conditions">
-                  <span>✓ {reward.cost} ботакоинов</span>
-                  <span>✓ {reward.requiredGames} образовательные игры</span>
-                  <span>✓ {reward.requiredCollectibles} предмета в Bota Studio</span>
-                  <span>✓ экранное время: {screenTimeMinutes}/{reward.screenTimeLimit} минут</span>
-                  <span>✓ подтверждение родителя</span>
+            <Card key={reward.id} className={`stack shop-card ${buttonState === 'approved' ? 'shop-card--approved' : ''}`}>
+              <div className="shop-card__head">
+                <span className="shop-card-icon">{reward.icon}</span>
+                <div className="shop-card__title-wrap">
+                  <h3 className="shop-card-title">{reward.title}</h3>
+                  <span className="shop-card__cost">{reward.cost} ботакоинов</span>
                 </div>
               </div>
 
-              <span className={`badge ${isApproved ? 'badge-success' : isPending ? 'badge-muted' : isDeclined ? 'badge-muted' : canRequest ? 'badge-success' : 'badge-muted'}`}>
-                {isApproved
-                  ? 'Одобрено родителем'
-                  : isPending
-                    ? 'Запрос отправлен родителю'
-                    : isDeclined
-                      ? 'Родитель оставил на потом'
-                      : missing.length > 0
-                        ? missing[0]
-                        : 'Готово к запросу'}
+              <p className="muted">{reward.description}</p>
+
+              <div className="shop-card__summary">
+                <span className="badge badge-muted">{reward.bonusLabel}</span>
+                <span className="shop-card__value">{reward.bonusValue}</span>
+              </div>
+
+              <div className="shop-conditions">
+                <span>Стоимость: {reward.cost} ботакоинов</span>
+                <span>Нужно игр: {reward.requiredGames}</span>
+                <span>Нужно предметов: {reward.requiredCollectibles}</span>
+                <span>Лимит экрана: {reward.screenTimeLimit} минут</span>
+              </div>
+
+              <span
+                className={`badge ${
+                  isApproved ? 'badge-success' : isPending ? 'badge-muted' : isLocked ? 'badge-muted' : 'badge-success'
+                }`}
+              >
+                {buttonLabel}
               </span>
 
               <Button
                 type="button"
-                variant={isPending || isApproved ? 'secondary' : 'primary'}
-                disabled={isPending || isApproved}
+                variant={buttonState === 'available' ? 'primary' : 'secondary'}
+                disabled={buttonState !== 'available'}
                 onClick={() => handleRequest(reward)}
               >
-                {isApproved ? 'Запрос одобрен' : isPending ? 'Запрос отправлен родителю' : 'Запросить у родителя'}
+                {buttonLabel}
               </Button>
 
               {missing.length > 0 && !isPending && !isApproved && (
@@ -129,14 +151,25 @@ function ShopPage({ appState, goToScreen, requestFamilyBonus }) {
                   ))}
                 </div>
               )}
+
+              {isDeclined && (
+                <div className="shop-declined-note">
+                  Родитель пока не подтвердил этот бонус.
+                </div>
+              )}
             </Card>
           );
         })}
       </div>
 
-      <Button variant="secondary" onClick={() => goToScreen('map')}>
-        Назад на карту
-      </Button>
+      <div className="bottom-actions">
+        <Button variant="secondary" onClick={() => goToScreen('map')}>
+          Назад на карту
+        </Button>
+        <Button variant="ghost" onClick={() => goToScreen('studio')}>
+          Мир Боты
+        </Button>
+      </div>
     </section>
   );
 }

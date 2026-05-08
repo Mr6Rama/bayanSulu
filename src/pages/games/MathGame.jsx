@@ -1,11 +1,14 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import Button from '../../components/Button';
 import Card from '../../components/Card';
 import Mascot from '../../components/Mascot';
 
 const answers = [4, 5, 6];
 const correctAnswer = 5;
+
+function CandyToken({ filled = false }) {
+  return <span className={`candy-token ${filled ? 'filled' : ''}`} aria-hidden="true" />;
+}
 
 function MathGame({ finishGame, goToScreen }) {
   const [status, setStatus] = useState('idle');
@@ -21,39 +24,62 @@ function MathGame({ finishGame, goToScreen }) {
       <Mascot
         mood="thinking"
         size="small"
-        speech="Посчитай конфеты вместе со мной!"
+        speech="Помоги мне посчитать сладости для пикника!"
       />
 
-      <Card className="stack">
+      <Card className="stack math-game-card">
         <span className="badge badge-muted">Астана • Счёт</span>
-        <p className="game-question">
-          У КамБота было 2 конфеты. Он нашёл ещё 3. Сколько стало?
-        </p>
+        <div className="math-equation" aria-label="2 конфеты плюс 3 конфеты равно вопрос">
+          <div className="math-equation__group">
+            <div className="candy-cluster" aria-hidden="true">
+              <CandyToken filled />
+              <CandyToken filled />
+            </div>
+            <span className="math-equation__label">2 конфеты</span>
+          </div>
+          <span className="math-equation__symbol" aria-hidden="true">
+            +
+          </span>
+          <div className="math-equation__group">
+            <div className="candy-cluster" aria-hidden="true">
+              <CandyToken filled />
+              <CandyToken filled />
+              <CandyToken filled />
+            </div>
+            <span className="math-equation__label">3 конфеты</span>
+          </div>
+          <span className="math-equation__symbol math-equation__symbol--equals" aria-hidden="true">
+            =
+          </span>
+          <span className="math-equation__result" aria-hidden="true">
+            ?
+          </span>
+        </div>
       </Card>
 
-      <div className="game-options">
+      <div className="game-options math-options">
         {answers.map((answer) => (
           <button
             key={answer}
             type="button"
-            className={`answer-option ${
+            className={`answer-option math-answer-option ${
               selectedAnswer === answer && status === 'success' ? 'correct' : ''
-            } ${selectedAnswer === answer && status === 'hint' ? 'wrong' : ''}`}
+            } ${selectedAnswer === answer && status === 'hint' ? 'soft-wrong' : ''}`}
             onClick={() => handleAnswer(answer)}
           >
-            {answer}
+            <span className="math-answer-option__value">{answer}</span>
           </button>
         ))}
       </div>
 
       {status === 'hint' && (
-        <Card className="info-card warning-card">Попробуй ещё раз — ты близко!</Card>
+        <Card className="info-card math-hint-card">Посмотри на обе кучки вместе.</Card>
       )}
 
       {status === 'success' && (
-        <Card className="success-card">
-          <h3>Правильно! 2 + 3 = 5.</h3>
-          <p>Счёт помогает быстро решать задачи в магазине и дома.</p>
+        <Card className="success-card math-success-card">
+          <h3>Дұрыс! КамБот собрал сладости.</h3>
+          <p>Теперь можно взять награду и идти дальше.</p>
         </Card>
       )}
 

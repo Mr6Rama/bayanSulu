@@ -174,7 +174,7 @@ function App() {
         }
 
         if (unlockedCollectibles.length < reward.requiredCollectibles) {
-          missing.push(`Открой ещё ${reward.requiredCollectibles - unlockedCollectibles.length} предмет в Bota Studio`);
+          missing.push(`Открой ещё ${reward.requiredCollectibles - unlockedCollectibles.length} предмет в Мире Боты`);
         }
 
         if (prev.screenTimeMinutes > reward.screenTimeLimit) {

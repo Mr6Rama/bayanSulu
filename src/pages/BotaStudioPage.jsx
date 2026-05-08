@@ -1,11 +1,22 @@
-import React from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Button from '../components/Button';
 import Card from '../components/Card';
 import Mascot from '../components/Mascot';
 import ProgressBar from '../components/ProgressBar';
 import { CollectibleVisual } from '../components/world/WorldItems';
 import { collectibles } from '../data/collectibles';
+
+const levelByCount = [
+  { max: 1, label: 'Начало путешествия' },
+  { max: 3, label: 'Первые открытия' },
+  { max: Infinity, label: 'Маленький Казахстан' },
+];
+
+const unlockLabelByGameId = {
+  math: 'Счёт с КамБотом',
+  memory: 'Казахские пары',
+  words: 'Казахские слова',
+};
 
 function isUnlocked(collectible, appState) {
   const completedGames = Array.isArray(appState.completedGames) ? appState.completedGames : [];
@@ -17,6 +28,10 @@ function isUnlocked(collectible, appState) {
     unlockedCollectibles.includes(collectible.id) ||
     (collectible.unlockGameId && completedGames.includes(collectible.unlockGameId))
   );
+}
+
+function getLevelLabel(unlockedCount) {
+  return levelByCount.find((level) => unlockedCount <= level.max)?.label || 'Начало путешествия';
 }
 
 function BotaStudioPage({ appState, goToScreen, newlyUnlockedId }) {
@@ -61,43 +76,33 @@ function BotaStudioPage({ appState, goToScreen, newlyUnlockedId }) {
     [],
   );
   const hasAllGames = ['math', 'memory', 'words'].every((gameId) => completedGames.includes(gameId));
-  const worldLevel = unlockedCount <= 1 ? 1 : unlockedCount <= 3 ? 2 : 3;
-  const worldLevelLabel =
-    worldLevel === 1
-      ? 'Уровень 1 — Пустая степь'
-      : worldLevel === 2
-        ? 'Уровень 2 — Первые открытия'
-        : 'Уровень 3 — Маленький Казахстан';
+  const worldLevelLabel = getLevelLabel(unlockedCount);
   const worldProgress = Math.round((unlockedCount / collectibles.length) * 100);
   const mascotSpeech =
     unlockedCount === 0
-      ? 'Начнём строить наш Казахстан?'
+      ? 'Проходи игры, чтобы наполнять Мир Боты новыми местами Казахстана.'
       : unlockedCount === 1
-        ? 'Первый предмет уже в мире!'
+        ? 'Первый предмет уже появился в Мире Боты.'
         : hasAllGames
-          ? 'Ты собрал первые места Казахстана. Скоро откроем новые!'
-          : 'Твой мир становится больше!';
+          ? 'Мир Боты почти собран. Остались последние детали Казахстана.'
+          : 'Проходи игры, чтобы наполнять Мир Боты новыми местами Казахстана.';
   const calloutText = activeHighlightId
-    ? `${collectibles.find((collectible) => collectible.id === activeHighlightId)?.title || 'Новый предмет'} добавлен в твой мир!`
+    ? `${collectibles.find((collectible) => collectible.id === activeHighlightId)?.title || 'Новый предмет'} добавлен в Мир Боты!`
     : '';
 
   return (
     <section className="screen bota-studio-screen">
       <Card className="stack bota-studio-hero">
         <div className="bota-studio-hero__copy">
-          <h2 className="hero-title">Мой мир Боты</h2>
-          <p className="muted">Собирай Казахстан вместе с КамБотом</p>
+          <h2 className="hero-title">Мир Боты</h2>
+          <p className="muted">Проходи игры, чтобы наполнять Мир Боты новыми местами Казахстана.</p>
         </div>
-        <Mascot
-          mood="happy"
-          size="medium"
-          speech={mascotSpeech}
-        />
+        <Mascot mood="happy" size="medium" speech={mascotSpeech} />
         <div className="stat">
           <span className="stat__value">
             {unlockedCount} / {collectibles.length}
           </span>
-          <span className="stat__label">открыто предметов</span>
+          <span className="stat__label">Открыто предметов</span>
         </div>
         <div className="world-level-chip">
           <strong>{worldLevelLabel}</strong>
@@ -108,8 +113,8 @@ function BotaStudioPage({ appState, goToScreen, newlyUnlockedId }) {
       <Card className="world-scene-card">
         <div className="world-scene-head">
           <div>
-            <h3 className="section-title">Bota World Scene</h3>
-            <p className="muted">Тёплый мир Казахстана, где предметы открываются после обучения.</p>
+            <h3 className="section-title">Мир Боты</h3>
+            <p className="muted">Предметы появляются там, где ребёнок проходит задания и открывает новые знания.</p>
           </div>
           <Button variant="secondary" onClick={() => goToScreen('map')}>
             Назад на карту
@@ -122,14 +127,15 @@ function BotaStudioPage({ appState, goToScreen, newlyUnlockedId }) {
           </div>
         )}
 
-        <div className="world-scene" aria-label="Bota World Scene">
+        <div className="world-scene" aria-label="Мир Боты">
           <div className="world-scene__sky" aria-hidden="true" />
+          <div className="world-scene__sun" aria-hidden="true" />
           <div className="world-scene__cloud world-scene__cloud--1" aria-hidden="true" />
           <div className="world-scene__cloud world-scene__cloud--2" aria-hidden="true" />
           <div className="world-scene__cloud world-scene__cloud--3" aria-hidden="true" />
           <div className="world-scene__hills world-scene__hills--back" aria-hidden="true" />
           <div className="world-scene__hills world-scene__hills--front" aria-hidden="true" />
-          <div className="world-scene__island" aria-hidden="true" />
+          <div className="world-scene__steppe" aria-hidden="true" />
           <div className="world-scene__path" aria-hidden="true" />
           <div className="world-scene__mascot" aria-hidden="true">
             <Mascot mood="main" size="medium" />
@@ -137,6 +143,7 @@ function BotaStudioPage({ appState, goToScreen, newlyUnlockedId }) {
 
           {orderedCollectibles.map((collectible) => {
             const unlocked = isUnlocked(collectible, appState);
+            const unlockHint = collectible.unlockGameId ? unlockLabelByGameId[collectible.unlockGameId] : '';
 
             return (
               <button
@@ -156,6 +163,7 @@ function BotaStudioPage({ appState, goToScreen, newlyUnlockedId }) {
                   locked={!unlocked}
                   size={collectible.size}
                   highlighted={collectible.id === activeHighlightId}
+                  unlockHint={!unlocked ? unlockHint : ''}
                 />
               </button>
             );
@@ -171,7 +179,7 @@ function BotaStudioPage({ appState, goToScreen, newlyUnlockedId }) {
               <h3 className="section-title">{selectedCollectible.title}</h3>
             </div>
             <span className={`badge ${selectedIsUnlocked ? 'badge-success' : 'badge-muted'}`}>
-              {selectedIsUnlocked ? 'Открыто в Bota Studio' : 'Откроется после задания'}
+              {selectedIsUnlocked ? 'Открыто в Мире Боты' : 'Откроется после игры'}
             </span>
           </div>
 
@@ -183,7 +191,7 @@ function BotaStudioPage({ appState, goToScreen, newlyUnlockedId }) {
             <strong>{selectedCollectible.title}</strong>
             <p className="muted">
               {selectedIsUnlocked
-                ? `Открыто через игру: ${selectedCollectible.unlockGameId ? selectedCollectible.unlockGameId : 'специальное задание'}`
+                ? `Открыто через игру: ${selectedCollectible.unlockGameId ? unlockLabelByGameId[selectedCollectible.unlockGameId] : 'специальное задание'}`
                 : selectedCollectible.lockedReason}
             </p>
           </div>
@@ -193,7 +201,7 @@ function BotaStudioPage({ appState, goToScreen, newlyUnlockedId }) {
       <Card className="stack world-legend">
         <div className="world-legend__row">
           <span className="section-title">Открыто {unlockedCount} / {collectibles.length}</span>
-          <span className="muted">Осталось собрать мир Боты по частям</span>
+          <span className="muted">Мир Боты растёт по мере обучения</span>
         </div>
         <ProgressBar value={unlockedCount} max={collectibles.length} label={`Мир собран на ${worldProgress}%`} />
         <div className="pill-row">
@@ -209,20 +217,16 @@ function BotaStudioPage({ appState, goToScreen, newlyUnlockedId }) {
         <h3 className="section-title">Следующее открытие</h3>
         <p className="muted">
           {hasAllGames
-            ? 'Скоро откроются Чарын, Домбра и новые аксессуары КамБота.'
+            ? 'Скоро появятся новые предметы для Мира Боты.'
             : nextCollectible?.unlockGameId
-              ? `Пройди игру «${nextCollectible.unlockGameId === 'memory'
-                ? 'Казахские пары'
-                : nextCollectible.unlockGameId === 'math'
-                  ? 'Счёт с КамБотом'
-                  : 'Казахские слова'}», чтобы открыть ${nextCollectible.title}.`
-              : nextCollectible?.lockedReason || 'Продолжай собирать мир Боты.'}
+              ? `Пройди игру «${unlockLabelByGameId[nextCollectible.unlockGameId] || nextCollectible.unlockGameId}», чтобы открыть ${nextCollectible.title}.`
+              : nextCollectible?.lockedReason || 'Продолжай собирать Мир Боты.'}
         </p>
       </Card>
 
       <Card className="info-card">
         <h3 className="section-title">Задание дня от КамБота</h3>
-        <p className="muted">Выучи одно казахское слово и открой новый декор для мира завтра.</p>
+        <p className="muted">Проходи игры, чтобы наполнять Мир Боты новыми местами Казахстана.</p>
       </Card>
     </section>
   );

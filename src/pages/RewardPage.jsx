@@ -10,7 +10,7 @@ const allGameIds = ['math', 'memory', 'words'];
 const skillLabelByGameId = {
   memory: 'Память',
   math: 'Счёт',
-  words: 'Казахский язык',
+  words: 'Қазақский язык',
 };
 
 function getNextHint(appState) {
@@ -18,13 +18,13 @@ function getNextHint(appState) {
   const remainingGameId = allGameIds.find((gameId) => !completedGames.includes(gameId));
 
   if (!remainingGameId) {
-    return 'Скоро появятся Чарын, Домбра и аксессуары КамБота.';
+    return 'Скоро появятся новые предметы для Мира Боты.';
   }
 
   const collectible = collectibleByGameId[remainingGameId];
 
   if (!collectible) {
-    return 'Продолжай проходить игры, чтобы открывать новые предметы для мира Боты.';
+    return 'Продолжай проходить игры, чтобы открывать новые предметы.';
   }
 
   if (remainingGameId === 'memory') {
@@ -57,82 +57,88 @@ function RewardPage({ appState, goToScreen }) {
 
   return (
     <section className="screen reward-screen">
-      <Mascot
-        mood="happy"
-        size="large"
-        speech="Смотри, что ты открыл для своего мира!"
-      />
-
       <Card className={`reward-hero ${isRepeat ? 'reward-hero--repeat' : 'reward-hero--reveal'}`}>
         <div className="reward-hero__top">
           <span className={`badge ${isRepeat ? 'badge-muted' : 'badge-success'}`}>
-            {isRepeat ? 'Предмет уже в твоём мире' : 'Новый предмет открыт!'}
+            {isRepeat ? 'Предмет уже открыт' : 'Новый предмет открыт!'}
           </span>
-          <h2 className="reward-hero__title">
-            {isRepeat ? 'Этот предмет уже в твоём мире' : 'Новый предмет открыт!'}
-          </h2>
-          <p className="reward-hero__subtitle">
-            {isRepeat ? 'Награда уже получена' : 'Мир Боты стал богаче'}
-          </p>
+          <h2 className="reward-title">Жарайсың!</h2>
+          <p className="reward-subtitle">Ты открыл новый предмет</p>
         </div>
 
-        {isRewardReady ? (
-          <div className="reward-hero__stage">
-            {!isRepeat && (
-              <div className="reward-particles" aria-hidden="true">
-                <span className="reward-particle reward-particle--1" />
-                <span className="reward-particle reward-particle--2" />
-                <span className="reward-particle reward-particle--3" />
-                <span className="reward-particle reward-particle--4" />
-              </div>
-            )}
-            {!isRepeat && <span className="reward-glow" aria-hidden="true" />}
-            <div className="reward-visual-shell">
-              <CollectibleVisual
-                visualKey={collectible.visualKey}
-                locked={false}
-                size="large"
-                highlighted={!isRepeat}
-              />
-            </div>
+        <div className="reward-hero__stage">
+          <Mascot
+            mood="happy"
+            size="large"
+            speech="Смотри, что ты открыл!"
+            className="reward-mascot"
+          />
+
+          {isRewardReady ? (
             <div className="reward-hero__body">
-              <span className="badge badge-muted">{collectible.category}</span>
-              <h3 className="reward-hero__item-title">{collectible.title}</h3>
-              <p className="muted">{collectible.learning}</p>
+              <div className="reward-celebration" aria-hidden="true">
+                {!isRepeat && (
+                  <div className="reward-particles">
+                    <span className="reward-particle reward-particle--1" />
+                    <span className="reward-particle reward-particle--2" />
+                    <span className="reward-particle reward-particle--3" />
+                    <span className="reward-particle reward-particle--4" />
+                    <span className="reward-particle reward-particle--5" />
+                    <span className="reward-particle reward-particle--6" />
+                  </div>
+                )}
+                {!isRepeat && <span className="reward-glow" aria-hidden="true" />}
+                <div className={`reward-visual-shell ${!isRepeat ? 'reward-visual-shell--active' : ''}`}>
+                  <CollectibleVisual
+                    visualKey={collectible.visualKey}
+                    locked={false}
+                    size="large"
+                    highlighted={!isRepeat}
+                  />
+                </div>
+              </div>
+
+              <div className="reward-hero__body-copy">
+                <span className="badge badge-muted">{collectible.category}</span>
+                <h3 className="reward-hero__item-title">{collectible.title}</h3>
+                <p className="muted">{collectible.learning}</p>
+              </div>
+
+              <div className="reward-coin reward-coin--burst">
+                <span className="coin-burst" aria-hidden="true">
+                  <span className="coin-burst__coin" />
+                  <span className="coin-burst__coin" />
+                  <span className="coin-burst__coin" />
+                </span>
+                <strong>{isRepeat ? 'Награда уже получена' : `+${lastReward.coins} ботакоинов`}</strong>
+              </div>
+
               {collectible.placementHint && (
-                <div className="learning-unit">
-                  <strong>Что изменится в мире</strong>
-                  <p className="muted">{collectible.placementHint}</p>
+                <div className="learning-unit reward-learning-unit">
+                  <strong>Что ты изучил</strong>
+                  <p className="muted">{receipt?.learned || collectible.placementHint}</p>
                 </div>
               )}
-              <div className="reward-coin">
-                {isRepeat ? 'Награда уже получена' : `+${lastReward.coins} ботакоинов`}
-              </div>
-              <p className="muted">
-                {isRepeat
-                  ? `Этот предмет уже в твоём мире. Всего: ${appState.coins} ботакоинов`
-                  : `Всего: ${appState.coins} ботакоинов`}
-              </p>
             </div>
-          </div>
-        ) : (
-          <div className="reward-hero__empty">
-            <p className="muted">Пройди первую игру, чтобы открыть предмет для Мира Боты.</p>
-            <p className="muted">Всего: {appState.coins} ботакоинов</p>
-          </div>
-        )}
+          ) : (
+            <div className="reward-hero__empty">
+              <p className="muted">Пройди первую игру — и предмет откроется.</p>
+              <p className="muted">Сейчас: {appState.coins} ботакоинов</p>
+            </div>
+          )}
+        </div>
       </Card>
 
       {lastReward && receipt && (
-        <Card className="stack">
-          <h3 className="section-title">Learning Receipt</h3>
+        <Card className="stack reward-receipt-card">
+          <h3 className="section-title">Что ты изучил</h3>
           <div className="stack">
             <div className="learning-unit">
               <strong>Навык: {skillLabelByGameId[lastReward.gameId]}</strong>
               <p className="muted">{receipt.done}</p>
             </div>
             <div className="learning-unit">
-              <strong>Что изучено</strong>
+              <strong>Что ты изучил</strong>
               <p className="muted">{receipt.learned}</p>
             </div>
             {collectible && (
@@ -145,19 +151,16 @@ function RewardPage({ appState, goToScreen }) {
         </Card>
       )}
 
-      <Card className="info-card">
+      <Card className="info-card reward-next-card">
         <h3 className="section-title">Следующее открытие</h3>
         <p className="muted">{nextHint}</p>
       </Card>
 
       <Button variant="primary" onClick={handleOpenStudio}>
-        {isRepeat ? 'Открыть Мой мир Боты' : 'Добавить в Мой мир Боты'}
+        Добавить в Мир Боты
       </Button>
       <Button variant="secondary" onClick={() => goToScreen('map')}>
         Вернуться на карту
-      </Button>
-      <Button variant="secondary" onClick={() => goToScreen('shop')}>
-        Открыть магазин
       </Button>
     </section>
   );
