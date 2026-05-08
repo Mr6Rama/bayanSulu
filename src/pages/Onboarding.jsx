@@ -32,7 +32,7 @@ function Onboarding({ completeOnboarding }) {
 
       <Card className="stack onboarding-hero">
         <div className="onboarding-hero__copy">
-          <span className="badge badge-muted">Kazakhstan Adventure</span>
+          <span className="badge badge-muted">Путешествие по Казахстану</span>
           <h2 className="hero-title">Сәлем! Я КамБот.</h2>
           <p className="muted">Пойдём в путешествие по Казахстану?</p>
         </div>

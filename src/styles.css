@@ -51,6 +51,11 @@ body,
   margin: 0;
 }
 
+html,
+body {
+  overflow: hidden;
+}
+
 body {
   min-height: 100vh;
   font-family: Nunito, Inter, system-ui, sans-serif;
@@ -74,7 +79,8 @@ button {
 .app-shell {
   width: 100%;
   max-width: 430px;
-  min-height: 100vh;
+  min-height: 100dvh;
+  height: 100dvh;
   margin: 0 auto;
   background:
     radial-gradient(circle at 20% 8%, rgba(255, 255, 255, 0.55) 0 68px, transparent 110px),
@@ -97,8 +103,8 @@ button {
 
 @media (min-width: 600px) {
   .app-shell {
-    min-height: 860px;
-    max-height: 920px;
+    min-height: min(920px, calc(100dvh - 48px));
+    height: min(920px, calc(100dvh - 48px));
     margin: 32px auto;
     border-radius: 40px;
     box-shadow: 0 24px 80px var(--shadow-strong);
@@ -111,18 +117,25 @@ button {
   z-index: 1;
   flex: 1;
   overflow-y: auto;
-  padding: 18px 18px 28px;
+  overflow-x: hidden;
+  min-height: 0;
+  min-width: 0;
+  padding: 16px 16px 24px;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .screen {
   display: grid;
   gap: 16px;
   padding-bottom: 8px;
+  min-width: 0;
 }
 
 .stack {
   display: grid;
   gap: 14px;
+  min-width: 0;
 }
 
 .header {
@@ -156,8 +169,9 @@ button {
 
 .header__title {
   margin: 0;
-  font-size: 18px;
+  font-size: clamp(20px, 4.8vw, 28px);
   line-height: 1.05;
+  overflow-wrap: anywhere;
 }
 
 .header-back {
@@ -180,6 +194,7 @@ button {
   border: 2px solid rgba(224, 171, 47, 0.78);
   box-shadow: 0 8px 16px rgba(122, 75, 6, 0.12);
   font-weight: 900;
+  white-space: nowrap;
 }
 
 .coin-badge__coin {
@@ -267,20 +282,23 @@ button.card {
   color: inherit;
   text-align: left;
   cursor: pointer;
+  width: 100%;
 }
 
 .section-title {
   margin: 0;
-  font-size: 22px;
+  font-size: clamp(18px, 4.5vw, 24px);
   line-height: 1.15;
   font-weight: 900;
+  overflow-wrap: anywhere;
 }
 
 .hero-title {
   margin: 0;
-  font-size: 30px;
+  font-size: clamp(20px, 5vw, 28px);
   line-height: 1.05;
   font-weight: 900;
+  overflow-wrap: anywhere;
 }
 
 .muted {
@@ -288,6 +306,7 @@ button.card {
   color: var(--text-muted);
   font-size: 15px;
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 
 .input {
@@ -809,10 +828,11 @@ button.card {
 
 .adventure-map {
   position: relative;
-  min-height: 420px;
-  aspect-ratio: 4 / 5;
+  width: 100%;
+  min-height: 0;
+  height: clamp(340px, 92vw, 430px);
   overflow: hidden;
-  border-radius: 32px;
+  border-radius: 28px;
   border: 2px solid rgba(240, 215, 175, 0.82);
   background:
     linear-gradient(180deg, #dff4ff 0%, #bfe7ff 35%, #fff1c9 66%, #dff0d5 100%);
@@ -877,7 +897,7 @@ button.card {
   display: grid;
   justify-items: center;
   gap: 5px;
-  width: 94px;
+  width: 88px;
   padding: 0;
   background: transparent;
   color: var(--text-main);
@@ -889,9 +909,9 @@ button.card {
   position: relative;
   display: grid;
   place-items: center;
-  width: 76px;
-  height: 76px;
-  border-radius: 26px;
+  width: 68px;
+  height: 68px;
+  border-radius: 22px;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 244, 218, 0.98));
   border: 3px solid rgba(240, 215, 175, 0.92);
   box-shadow: 0 12px 22px rgba(87, 57, 24, 0.15);
@@ -899,7 +919,7 @@ button.card {
 }
 
 .map-node__icon {
-  font-size: 32px;
+  font-size: 28px;
   line-height: 1;
 }
 
@@ -909,9 +929,9 @@ button.card {
   bottom: -6px;
   display: grid;
   place-items: center;
-  min-width: 26px;
+  min-width: 24px;
   height: 26px;
-  padding: 0 6px;
+  padding: 0 5px;
   border-radius: 50%;
   background: #fff;
   border: 2px solid rgba(255, 255, 255, 0.92);
@@ -994,10 +1014,12 @@ button.card {
   min-height: 58px;
   font-size: 17px;
   border-radius: 28px;
+  width: 100%;
 }
 
 .map-secondary-card {
-  gap: 12px;
+  gap: 10px;
+  padding: 14px;
 }
 
 .adventure-map__secondary-head {
@@ -1006,7 +1028,7 @@ button.card {
 }
 
 .adventure-map__secondary-head .muted {
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .map-summary-grid {
@@ -1219,27 +1241,32 @@ button.card {
   font-weight: 900;
 }
 
-.shop-card {
-  gap: 10px;
+.family-reward-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  overflow: hidden;
 }
 
-.shop-card__head {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 12px;
-  align-items: center;
+.family-reward-card--approved {
+  border-color: rgba(109, 170, 103, 0.56);
+  background: linear-gradient(180deg, rgba(248, 255, 247, 0.98), rgba(255, 252, 246, 0.96));
 }
 
-.shop-card__title-wrap {
-  display: grid;
-  gap: 6px;
+.reward-main {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
 }
 
-.shop-card__summary {
+.reward-tags {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+  min-width: 0;
 }
 
 .shop-card__value {
@@ -1254,9 +1281,48 @@ button.card {
   font-weight: 900;
 }
 
-.shop-card--approved {
-  border-color: rgba(109, 170, 103, 0.56);
-  background: linear-gradient(180deg, rgba(248, 255, 247, 0.98), rgba(255, 252, 246, 0.96));
+.reward-requirements {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.shop-requirement-row {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background: rgba(255, 248, 232, 0.94);
+  border: 1px solid rgba(240, 215, 175, 0.76);
+  color: var(--text-main);
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.shop-missing-list {
+  display: grid;
+  gap: 6px;
+  width: 100%;
+  padding-top: 2px;
+  color: #c78a0d;
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 900;
+  overflow-wrap: anywhere;
+}
+
+.reward-action {
+  width: 100%;
+  min-height: 52px;
+}
+
+.family-reward-card .btn {
+  width: 100%;
 }
 
 .shop-declined-note {
@@ -1270,30 +1336,41 @@ button.card {
 }
 
 .route-list--secondary {
-  gap: 10px;
+  gap: 8px;
 }
 
 .route-list--secondary .location-card {
-  min-height: 90px;
-  padding: 12px;
-  border-radius: 22px;
+  min-height: 72px;
+  padding: 8px 10px;
+  border-radius: 18px;
   box-shadow: 0 8px 18px var(--shadow-soft);
+  align-items: start;
+}
+
+.route-list--secondary .location-card.locked {
+  min-height: 64px;
+  opacity: 0.72;
 }
 
 .route-list--secondary .location-card-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 18px;
-  font-size: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  font-size: 22px;
 }
 
 .route-list--secondary .location-card-title {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .route-list--secondary .location-card-subtitle,
 .route-list--secondary .location-card-meta {
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.2;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
 }
 
 .route-list--secondary .badge {
@@ -1406,12 +1483,12 @@ button.card {
 .location-card {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 14px;
-  align-items: center;
+  gap: 12px;
+  align-items: start;
   width: 100%;
-  min-height: 108px;
-  padding: 16px;
-  border-radius: var(--radius-lg);
+  min-height: 96px;
+  padding: 14px;
+  border-radius: 22px;
   background:
     linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, #fff8e8 64%, rgba(203, 238, 232, 0.4) 100%);
   color: var(--text-main);
@@ -1435,31 +1512,34 @@ button.card {
 .location-card-icon {
   display: grid;
   place-items: center;
-  width: 58px;
-  height: 58px;
-  border-radius: 22px;
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
   background: var(--bg-soft);
-  font-size: 30px;
+  font-size: 26px;
   box-shadow: inset 0 -4px 0 rgba(217, 130, 24, 0.1);
 }
 
 .location-card-body {
   display: grid;
-  gap: 5px;
+  gap: 4px;
+  min-width: 0;
 }
 
 .location-card-title,
 .shop-card-title {
   margin: 0;
-  font-size: 19px;
+  font-size: clamp(16px, 4.2vw, 19px);
   line-height: 1.1;
   font-weight: 900;
+  overflow-wrap: anywhere;
 }
 
 .location-card-subtitle {
   color: var(--text-muted);
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 800;
+  overflow-wrap: anywhere;
 }
 
 .location-card-meta {
@@ -1467,6 +1547,7 @@ button.card {
   font-size: 13px;
   line-height: 1.35;
   font-weight: 700;
+  overflow-wrap: anywhere;
 }
 
 .badge {
@@ -1518,13 +1599,14 @@ button.card {
 
 .game-question {
   margin: 0;
-  font-size: 22px;
-  line-height: 1.32;
+  font-size: clamp(20px, 5vw, 26px);
+  line-height: 1.18;
   font-weight: 900;
 }
 
 .words-hero-card {
-  gap: 12px;
+  gap: 8px;
+  padding: 14px;
 }
 
 .words-progress-row {
@@ -1537,7 +1619,7 @@ button.card {
 
 .words-progress {
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 900;
 }
 
@@ -1548,10 +1630,10 @@ button.card {
 .words-question-card {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 14px;
+  gap: 10px;
   align-items: center;
-  padding: 16px;
-  border-radius: 26px;
+  padding: 12px;
+  border-radius: 20px;
   background: linear-gradient(135deg, #fffdf7 0%, #fff2d8 100%);
   border: 2px solid rgba(240, 215, 175, 0.88);
 }
@@ -1559,11 +1641,13 @@ button.card {
 .words-question-card__hint {
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 22px;
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
   background: rgba(79, 182, 173, 0.14);
-  font-size: 32px;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
 }
 
 .words-question-card__body {
@@ -1573,25 +1657,32 @@ button.card {
 
 .words-question-card__label {
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 900;
 }
 
 .words-hint-card {
-  padding: 14px 16px;
+  padding: 10px 12px;
   background: linear-gradient(180deg, #fff8e7, #fff2d0);
 }
 
 .words-hint-card__text {
   margin: 0;
   color: var(--text-main);
-  font-size: 15px;
-  line-height: 1.35;
+  font-size: 14px;
+  line-height: 1.3;
   font-weight: 800;
 }
 
 .words-options {
   gap: 10px;
+}
+
+.words-answer-option {
+  min-height: 58px;
+  padding: 12px 14px;
+  font-size: 17px;
+  border-radius: 20px;
 }
 
 .math-game-card {
@@ -1696,14 +1787,14 @@ button.card {
 
 .answer-option {
   width: 100%;
-  min-height: 74px;
-  padding: 14px 16px;
-  border-radius: 24px;
+  min-height: 64px;
+  padding: 12px 16px;
+  border-radius: 22px;
   background: rgba(255, 255, 255, 0.98);
   color: var(--text-main);
   border: 3px solid rgba(240, 215, 175, 0.92);
   box-shadow: 0 10px 20px var(--shadow-soft);
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 900;
   cursor: pointer;
 }
@@ -1738,18 +1829,16 @@ button.card {
   border-color: rgba(104, 185, 132, 0.62);
 }
 
-.words-answer-option {
-  min-height: 72px;
-  padding: 14px 16px;
-  font-size: 18px;
-}
-
 .words-answer-option__text {
   display: inline-block;
+  width: 100%;
 }
 
 .words-hint-feedback {
   background: linear-gradient(180deg, #fff8df, #fff1ca);
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.3;
 }
 
 .words-success-card {
@@ -1798,13 +1887,14 @@ button.card {
 }
 
 .memory-intro-card {
-  gap: 8px;
+  gap: 6px;
+  padding: 14px;
 }
 
 .memory-progress {
   margin: 0;
   color: var(--secondary);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.3;
   font-weight: 900;
 }
@@ -1812,14 +1902,15 @@ button.card {
 .memory-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px;
+  width: 100%;
 }
 
 .memory-card {
   aspect-ratio: 1;
-  min-height: 108px;
+  min-height: 0;
   padding: 0;
-  border-radius: 24px;
+  border-radius: 22px;
   background: transparent;
   color: inherit;
   border: 0;
@@ -1836,7 +1927,7 @@ button.card {
   border-radius: inherit;
   transform-style: preserve-3d;
   transition: transform 260ms ease;
-  box-shadow: 0 12px 22px rgba(87, 57, 24, 0.14);
+  box-shadow: 0 10px 18px rgba(87, 57, 24, 0.14);
 }
 
 .memory-card.open .memory-card__inner {
@@ -1864,25 +1955,25 @@ button.card {
 .memory-card__face--back::before {
   content: '';
   position: absolute;
-  inset: 10px;
-  border-radius: 20px;
-  border: 2px solid rgba(255, 237, 201, 0.34);
+  inset: 12px;
+  border-radius: 18px;
+  border: 2px solid rgba(255, 237, 201, 0.3);
 }
 
 .memory-card__ornament {
   position: absolute;
-  width: 64%;
-  height: 64%;
+  width: 58%;
+  height: 58%;
   border-radius: 50%;
-  border: 6px solid rgba(255, 243, 214, 0.26);
+  border: 5px solid rgba(255, 243, 214, 0.24);
   border-top-color: transparent;
   transform: rotate(15deg);
 }
 
 .memory-card__ornament--alt {
-  width: 42%;
-  height: 42%;
-  border-width: 4px;
+  width: 38%;
+  height: 38%;
+  border-width: 3px;
   transform: rotate(-20deg);
 }
 
@@ -1917,7 +2008,7 @@ button.card {
 .memory-card__symbol {
   position: relative;
   z-index: 1;
-  font-size: 26px;
+  font-size: clamp(24px, 8vw, 34px);
   line-height: 1;
   letter-spacing: 0.03em;
 }
@@ -1932,7 +2023,7 @@ button.card {
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.9);
   color: var(--text-main);
-  font-size: 11px;
+  font-size: 10px;
   line-height: 1.15;
   font-weight: 900;
 }
@@ -1992,6 +2083,22 @@ button.card {
   border: 1px solid rgba(240, 215, 175, 0.72);
 }
 
+.reward-screen .screen {
+  gap: 14px;
+}
+
+.reward-hero__body,
+.reward-hero__empty,
+.reward-hero__body-copy,
+.reward-learning-unit,
+.reward-receipt-card,
+.reward-next-card,
+.map-secondary-card,
+.words-hero-card,
+.words-question-card__body {
+  min-width: 0;
+}
+
 .reward-hero--reveal {
   animation: rewardReveal 420ms ease-out both;
 }
@@ -2010,9 +2117,10 @@ button.card {
 
 .reward-title {
   margin: 0;
-  font-size: 40px;
+  font-size: clamp(28px, 7vw, 40px);
   line-height: 1.05;
   font-weight: 900;
+  overflow-wrap: anywhere;
 }
 
 .reward-subtitle {
@@ -2136,9 +2244,10 @@ button.card {
 
 .reward-hero__item-title {
   margin: 0;
-  font-size: 30px;
+  font-size: clamp(22px, 6vw, 30px);
   line-height: 1.1;
   font-weight: 900;
+  overflow-wrap: anywhere;
 }
 
 .reward-hero__body .muted {
@@ -2172,7 +2281,7 @@ button.card {
   border-radius: 999px;
   background: linear-gradient(180deg, #fff6c6, #ffdf77);
   color: #7a4b06;
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 900;
   box-shadow: 0 10px 20px rgba(247, 201, 72, 0.22);
 }
@@ -2414,22 +2523,6 @@ button.card {
   font-size: 14px;
   line-height: 1.45;
   font-weight: 800;
-}
-
-.shop-conditions {
-  display: grid;
-  gap: 6px;
-  color: var(--text-muted);
-  font-size: 14px;
-  font-weight: 800;
-}
-
-.shop-missing-list {
-  display: grid;
-  gap: 6px;
-  color: var(--warning);
-  font-size: 14px;
-  font-weight: 900;
 }
 
 .learning-unit {
@@ -2999,4 +3092,229 @@ button.card {
   .world-item--large {
     width: clamp(88px, 22vw, 140px);
   }
+}
+
+@media (min-width: 700px) {
+  .shop-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 390px) {
+  .screen-content {
+    padding: 14px 14px 20px;
+  }
+
+  .screen {
+    gap: 14px;
+  }
+
+  .stack {
+    gap: 12px;
+  }
+
+  .header {
+    min-height: 60px;
+    padding: 8px 12px;
+  }
+
+  .header__title {
+    font-size: 17px;
+  }
+
+  .coin-badge {
+    gap: 6px;
+    padding: 6px 10px;
+  }
+
+  .map-summary-grid {
+    gap: 8px;
+  }
+
+  .map-summary-grid .stat {
+    min-height: 70px;
+    padding: 10px;
+  }
+
+  .map-summary-grid .stat__value {
+    font-size: 16px;
+  }
+
+  .map-summary-grid .stat:last-child .stat__value {
+    font-size: 14px;
+  }
+
+  .map-summary-grid .stat__label {
+    font-size: 11px;
+  }
+
+  .adventure-map {
+    height: clamp(340px, 92vw, 420px);
+    border-radius: 26px;
+  }
+
+  .map-node {
+    width: 82px;
+  }
+
+  .map-node__pin {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+  }
+
+  .map-node__icon {
+    font-size: 26px;
+  }
+
+  .map-node__label {
+    font-size: 11px;
+  }
+
+  .route-list--secondary .location-card {
+    min-height: 76px;
+    padding: 10px;
+  }
+
+  .route-list--secondary .location-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 14px;
+    font-size: 20px;
+  }
+
+  .route-list--secondary .location-card-title {
+    font-size: 14px;
+  }
+
+  .route-list--secondary .location-card-subtitle,
+  .route-list--secondary .location-card-meta {
+    font-size: 11px;
+    -webkit-line-clamp: 1;
+  }
+
+  .bottom-actions {
+    gap: 8px;
+  }
+
+  .memory-intro-card {
+    padding: 12px;
+    gap: 4px;
+  }
+
+  .memory-grid {
+    gap: 10px;
+  }
+
+  .memory-card {
+    border-radius: 20px;
+  }
+
+  .memory-card__face--back::before {
+    inset: 10px;
+  }
+
+  .memory-card__ornament {
+    width: 54%;
+    height: 54%;
+    border-width: 4px;
+  }
+
+  .memory-card__ornament--alt {
+    width: 36%;
+    height: 36%;
+    border-width: 3px;
+  }
+
+  .memory-card__symbol {
+    font-size: 26px;
+  }
+
+  .memory-card__title {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    font-size: 9px;
+  }
+
+  .answer-option {
+    min-height: 58px;
+    font-size: 17px;
+  }
+
+  .game-question {
+    font-size: 18px;
+  }
+
+  .math-equation {
+    gap: 8px;
+  }
+
+  .math-equation__group {
+    padding: 10px 8px;
+    border-radius: 20px;
+  }
+
+  .candy-token {
+    width: 24px;
+    height: 24px;
+  }
+
+  .math-equation__symbol {
+    font-size: 20px;
+  }
+
+  .math-equation__result {
+    width: 46px;
+    height: 46px;
+    font-size: 24px;
+  }
+
+  .memory-grid {
+    gap: 8px;
+  }
+
+  .memory-card__symbol {
+    font-size: 16px;
+  }
+
+  .memory-card__title {
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    font-size: 9px;
+  }
+
+  .words-question-card {
+    grid-template-columns: 1fr;
+    justify-items: start;
+  }
+
+  .words-question-card__hint {
+    width: 46px;
+    height: 46px;
+    font-size: 18px;
+  }
+
+  .words-answer-option {
+    min-height: 56px;
+    padding: 11px 14px;
+    font-size: 17px;
+  }
+
+  .reward-title {
+    font-size: 30px;
+  }
+
+  .reward-hero__item-title {
+    font-size: 22px;
+  }
+
+  .reward-coin--burst {
+    font-size: 16px;
+  }
+}
+
+.words-back-button {
+  width: 100%;
 }

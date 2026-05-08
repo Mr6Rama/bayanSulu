@@ -184,8 +184,8 @@ function MapPage({ appState, goToScreen }) {
 
       <Card className="stack info-card map-secondary-card">
         <div className="adventure-map__secondary-head">
-          <h3 className="section-title">Ещё локации</h3>
-          <p className="muted">Открывай, когда будешь готов.</p>
+          <h3 className="section-title">Локации</h3>
+          <p className="muted">Коротко и по делу.</p>
         </div>
         <div className="route-list route-list--secondary">
           {locations.map((location) => (
@@ -194,7 +194,6 @@ function MapPage({ appState, goToScreen }) {
               title={location.title}
               subtitle={location.subtitle}
               icon={location.icon}
-              fact={location.fact}
               reward={location.reward}
               status={
                 location.status === 'locked'

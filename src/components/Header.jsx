@@ -3,7 +3,7 @@ import CoinBadge from './CoinBadge';
 import Button from './Button';
 
 const titleMap = {
-  onboarding: 'Bayan Sulu Kids',
+  onboarding: 'Баян Сулу',
   map: 'Карта путешествия',
   reward: 'Награда',
   studio: 'Мир Боты',
@@ -25,7 +25,7 @@ const backTargets = {
 };
 
 function Header({ currentScreen, onNavigate, appState }) {
-  const title = titleMap[currentScreen] || 'Bayan Sulu Kids';
+  const title = titleMap[currentScreen] || 'Баян Сулу';
   const backTarget = backTargets[currentScreen];
 
   return (

@@ -104,27 +104,38 @@ function ShopPage({ appState, goToScreen, requestFamilyBonus }) {
           }[buttonState];
 
           return (
-            <Card key={reward.id} className={`stack shop-card ${buttonState === 'approved' ? 'shop-card--approved' : ''}`}>
-              <div className="shop-card__head">
-                <span className="shop-card-icon">{reward.icon}</span>
-                <div className="shop-card__title-wrap">
-                  <h3 className="shop-card-title">{reward.title}</h3>
-                  <span className="shop-card__cost">{reward.cost} ботакоинов</span>
-                </div>
+            <Card
+              key={reward.id}
+              className={`family-reward-card ${buttonState === 'approved' ? 'family-reward-card--approved' : ''}`}
+            >
+              <div className="reward-main">
+                <span className="shop-card-icon" aria-hidden="true">
+                  {reward.icon}
+                </span>
+                <h3 className="shop-card-title">{reward.title}</h3>
+                <span className="shop-card__cost">{reward.cost} ботакоинов</span>
+                <p className="muted">{reward.description}</p>
               </div>
 
-              <p className="muted">{reward.description}</p>
-
-              <div className="shop-card__summary">
+              <div className="reward-tags">
                 <span className="badge badge-muted">{reward.bonusLabel}</span>
                 <span className="shop-card__value">{reward.bonusValue}</span>
               </div>
 
-              <div className="shop-conditions">
-                <span>Стоимость: {reward.cost} ботакоинов</span>
-                <span>Нужно игр: {reward.requiredGames}</span>
-                <span>Нужно предметов: {reward.requiredCollectibles}</span>
-                <span>Лимит экрана: {reward.screenTimeLimit} минут</span>
+              <div className="reward-requirements">
+                <span className="shop-requirement-row">Стоимость: {reward.cost} ботакоинов</span>
+                <span className="shop-requirement-row">Нужно игр: {reward.requiredGames}</span>
+                <span className="shop-requirement-row">
+                  Нужно предметов: {reward.requiredCollectibles}
+                </span>
+                <span className="shop-requirement-row">Лимит экрана: {reward.screenTimeLimit} минут</span>
+                {missing.length > 0 && !isPending && !isApproved && (
+                  <div className="shop-missing-list">
+                    {missing.map((item) => (
+                      <span key={item}>{item}</span>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <span
@@ -136,6 +147,7 @@ function ShopPage({ appState, goToScreen, requestFamilyBonus }) {
               </span>
 
               <Button
+                className="reward-action"
                 type="button"
                 variant={buttonState === 'available' ? 'primary' : 'secondary'}
                 disabled={buttonState !== 'available'}
@@ -144,19 +156,7 @@ function ShopPage({ appState, goToScreen, requestFamilyBonus }) {
                 {buttonLabel}
               </Button>
 
-              {missing.length > 0 && !isPending && !isApproved && (
-                <div className="shop-missing-list">
-                  {missing.map((item) => (
-                    <span key={item}>{item}</span>
-                  ))}
-                </div>
-              )}
-
-              {isDeclined && (
-                <div className="shop-declined-note">
-                  Родитель пока не подтвердил этот бонус.
-                </div>
-              )}
+              {isDeclined && <div className="shop-declined-note">Родитель пока не подтвердил этот бонус.</div>}
             </Card>
           );
         })}

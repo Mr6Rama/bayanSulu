@@ -68,7 +68,7 @@ function MemoryGame({ finishGame, goToScreen }) {
 
       <Card className="stack memory-intro-card">
         <span className="badge badge-muted">Алматы • Память</span>
-        <p className="game-question">Открой карточки и найди одинаковые пары.</p>
+        <p className="game-question">Найди одинаковые пары.</p>
         <p className="memory-progress">Найдено пар: {matchedPairs} / {totalPairs}</p>
       </Card>
 

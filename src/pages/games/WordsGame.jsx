@@ -93,11 +93,11 @@ function WordsGame({ finishGame, goToScreen }) {
       <Mascot
         mood="thinking"
         size="small"
-        speech="Давай выучим три казахских слова!"
+        speech="Три слова. По одному."
       />
 
       <Card className="stack words-hero-card">
-        <span className="badge badge-muted">Туркестан • Қазақша</span>
+        <span className="badge badge-muted">Казахские слова</span>
         <div className="words-progress-row">
           <span className="words-progress">{progressLabel}</span>
           <span className="words-progress words-progress--accent">3 слова</span>
@@ -133,13 +133,13 @@ function WordsGame({ finishGame, goToScreen }) {
       </div>
 
       {status === 'hint' && (
-        <Card className="info-card words-hint-feedback">Подумай ещё раз. КамБот подсказывает: это не {selectedAnswer}.</Card>
+        <Card className="info-card words-hint-feedback">Подумай ещё раз.</Card>
       )}
 
       {status === 'success' && !finishedQuiz && (
         <Card className="success-card words-success-card">
           <h3>Дұрыс!</h3>
-          <p>{isLastQuestion ? 'Ты выучил 3 слова на казахском!' : 'Отлично, идём дальше.'}</p>
+          <p>{isLastQuestion ? 'Ты выучил 3 слова на казахском!' : 'Отлично.'}</p>
         </Card>
       )}
 
@@ -158,7 +158,7 @@ function WordsGame({ finishGame, goToScreen }) {
       )}
 
       {!finishedQuiz && (
-        <Button variant="secondary" onClick={() => goToScreen('map')}>
+        <Button variant="secondary" className="words-back-button" onClick={() => goToScreen('map')}>
           Назад на карту
         </Button>
       )}
